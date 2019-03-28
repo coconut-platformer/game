@@ -6,16 +6,15 @@ import World from "./world";
 import coconutImage from "./assets/coconut.png";
 
 const canvas = document.getElementById("game");
+const context = canvas.getContext("2d");
 
-const ctx = canvas.getContext("2d");
+const drawGround = () => {
+  context.fillStyle = "#aa0";
+  context.fillRect(0, 600, 1024, 168);
 
-const drawGround = xOffset => {
-  ctx.fillStyle = "#aa0";
-  ctx.fillRect(0, 600, 1024, 168);
-
-  ctx.strokeStyle = "#000";
-  for (let x = xOffset; x < 1024; x += 20) {
-    ctx.strokeRect(x, 600, 1, 168);
+  context.strokeStyle = "#000";
+  for (let x = 0; x < 1024; x += 20) {
+    context.strokeRect(x, 600, 1, 168);
   }
 };
 
@@ -28,11 +27,7 @@ assetManager
 function runGame() {
   let coconut = new Coconut(assetManager.getImage("coconut"));
   let world = new World();
-  // let physics = new Physics(5, 2, level);
-
-  // for (let i = 0; i < 100; i++) {
-  //   world.addNextBlock();
-  // }
+  const physics = new Physics(5, 2, world);
 
   document.addEventListener("keydown", e => {
     if (e.key === " ") {
@@ -41,13 +36,12 @@ function runGame() {
   });
 
   const tick = () => {
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, 1024, 768);
-    world.draw(ctx);
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, 1024, 768);
+    world.draw(context);
     world.updateDrawPosition();
-    console.log(world.collision(coconut));
-    coconut.draw(ctx, 0);
-    // coconut.next(physics);
+    physics.integrate(coconut);
+    coconut.draw(context);
     requestAnimationFrame(tick);
   };
 

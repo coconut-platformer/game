@@ -1,14 +1,14 @@
 import Block from "./block";
+import MathHelpers from "./mathHelpers";
 
 const TERRAIN_BLOCK_SIZE = 64;
-const WORLD_HEIGHT = 6;
-const WORLD_TOP = 300;
+const WORLD_HEIGHT = 5;
+const WORLD_TOP = 350;
 const WORLD_BOTTOM = TERRAIN_BLOCK_SIZE * WORLD_HEIGHT + WORLD_TOP;
 
 export default class World {
   constructor() {
     this.blocks = [];
-    this.xOffset = 0;
     const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
     for (let i = 0; i <= BLOCK_COUNT; i++) {
@@ -16,17 +16,13 @@ export default class World {
     }
   }
 
-  genRand(min, max) {
-    return Math.round(Math.random() * (max - min) + min);
-  }
-
   addNextBlock() {
     const lastBlock = this.blocks.slice(-1)[0];
     const lastY = lastBlock
       ? lastBlock.y
-      : this.genRand(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE + WORLD_TOP;
+      : MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE + WORLD_TOP;
     const x = lastBlock ? lastBlock.x + TERRAIN_BLOCK_SIZE : 0;
-    const nextY = lastY + this.genRand(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
+    const nextY = lastY + MathHelpers.randomIntegerBetween(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
     const block = new Block(
       x,
       nextY < WORLD_TOP || nextY > WORLD_BOTTOM ? lastY : nextY,
@@ -37,20 +33,21 @@ export default class World {
   }
 
   draw(context) {
-    context.fillStyle = "#f0f";
-    context.fillRect(0, WORLD_TOP, 1024, 1);
-
-    context.fillStyle = "#ff0";
-    context.fillRect(0, WORLD_BOTTOM + TERRAIN_BLOCK_SIZE, 1024, 1);
     this.blocks.forEach(block => {
-      block.draw(context, this.xOffset);
+      block.draw(context);
     });
   }
 
   updateDrawPosition(xAmount = -1) {
-    this.xOffset += xAmount;
+    this.blocks.map((block) => {
+      return block.x += xAmount;
+    });
 
-    if (this.blocks[0].right + this.xOffset < 0) {
+    this.updateBlockList();
+  }
+
+  updateBlockList() {
+    if (this.blocks[0].points().topRight.x < 0) {
       this.blocks = this.blocks.slice(1);
       this.addNextBlock();
     }
