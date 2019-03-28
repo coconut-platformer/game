@@ -45,6 +45,7 @@ function runGame() {
     ctx.fillRect(0, 0, 1024, 768);
     world.draw(ctx);
     world.updateDrawPosition();
+    console.log(world.collision(coconut));
     coconut.draw(ctx, 0);
     // coconut.next(physics);
     requestAnimationFrame(tick);

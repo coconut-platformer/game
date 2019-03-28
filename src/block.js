@@ -12,4 +12,24 @@ export default class Block {
     context.fillStyle = this.backgroundColor;
     context.fillRect(xOffset + this.x, this.y, this.width, this.height);
   }
+
+  points() {
+    return {
+      topLeft: { x: this.x, y: this.y },
+      topRight: { x: this.x + this.width, y: this.y },
+      bottomRight: { x: this.x + this.width, y: this.y + this.height },
+      bottomLeft: { x: this.x, y: this.y + this.height }
+    };
+  }
+
+  overlaps(other) {
+    const { topLeft, bottomRight } = this.points();
+    return Object.values(other.points()).some(point => {
+      return (
+        point.x >= topLeft.x &&
+        point.x <= bottomRight.x &&
+        (point.y >= topLeft.y && point.y <= bottomRight.y)
+      );
+    });
+  }
 }

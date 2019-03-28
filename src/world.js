@@ -55,4 +55,18 @@ export default class World {
       this.addNextBlock();
     }
   }
+
+  collision(block) {
+    const collisions = [];
+    for (let index = 0; index < this.blocks.length; index++) {
+      const worldBlock = this.blocks[index];
+      if (worldBlock.overlaps(block)) {
+        collisions.push(worldBlock);
+        if (collisions.length === 2) {
+          break;
+        }
+      }
+    }
+    return collisions;
+  }
 }

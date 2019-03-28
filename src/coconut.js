@@ -2,7 +2,7 @@ import Block from "./block";
 
 export default class Coconut extends Block {
   constructor(image) {
-    super(0, 0, 32, 32);
+    super(0, 600, 32, 32);
     this.coconut = image;
   }
 
