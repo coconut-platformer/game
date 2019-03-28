@@ -1,6 +1,10 @@
+import AssetManager from "./assetManager";
 import Coconut from "./coconut";
 import Physics from "./physics";
 import World from "./world";
+
+import coconutImage from "./assets/coconut.png";
+
 const canvas = document.getElementById("game");
 
 const ctx = canvas.getContext("2d");
@@ -15,28 +19,36 @@ const drawGround = xOffset => {
   }
 };
 
-let coconut = new Coconut(0);
-let world = new World();
-// let physics = new Physics(5, 2, level);
+const assetManager = new AssetManager();
+assetManager
+  .loadImages([{ name: "coconut", src: coconutImage }])
+  .then(runGame)
+  .catch(console.error);
 
-for (let i = 0; i < 100; i++) {
-  world.addNextBlock();
+function runGame() {
+  let coconut = new Coconut(assetManager.getImage("coconut"));
+  let world = new World();
+  // let physics = new Physics(5, 2, level);
+
+  // for (let i = 0; i < 100; i++) {
+  //   world.addNextBlock();
+  // }
+
+  document.addEventListener("keydown", e => {
+    if (e.key === " ") {
+      coconut.jump();
+    }
+  });
+
+  const tick = () => {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, 1024, 768);
+    world.draw(ctx);
+    world.updateDrawPosition();
+    coconut.draw(ctx, 0);
+    // coconut.next(physics);
+    requestAnimationFrame(tick);
+  };
+
+  tick();
 }
-
-document.addEventListener("keydown", e => {
-  if (e.key === " ") {
-    coconut.jump();
-  }
-});
-
-const tick = () => {
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, 1024, 768);
-  world.draw(ctx);
-  world.updateDrawPosition();
-  // coconut.draw(groundOffset, ctx);
-  // coconut.next(physics);
-  requestAnimationFrame(tick);
-};
-
-tick();

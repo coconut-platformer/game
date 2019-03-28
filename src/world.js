@@ -9,6 +9,11 @@ export default class World {
   constructor() {
     this.blocks = [];
     this.xOffset = 0;
+    const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
+
+    for (let i = 0; i <= BLOCK_COUNT; i++) {
+      this.addNextBlock();
+    }
   }
 
   genRand(min, max) {
@@ -16,11 +21,11 @@ export default class World {
   }
 
   addNextBlock() {
-    const x = this.blocks.length * TERRAIN_BLOCK_SIZE;
     const lastBlock = this.blocks.slice(-1)[0];
     const lastY = lastBlock
       ? lastBlock.y
       : this.genRand(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE + WORLD_TOP;
+    const x = lastBlock ? lastBlock.x + TERRAIN_BLOCK_SIZE : 0;
     const nextY = lastY + this.genRand(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
     const block = new Block(
       x,
@@ -44,5 +49,10 @@ export default class World {
 
   updateDrawPosition(xAmount = -1) {
     this.xOffset += xAmount;
+
+    if (this.blocks[0].right + this.xOffset < 0) {
+      this.blocks = this.blocks.slice(1);
+      this.addNextBlock();
+    }
   }
 }

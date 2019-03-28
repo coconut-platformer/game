@@ -5,6 +5,7 @@ export default class Block {
     this.width = width;
     this.height = height;
     this.backgroundColor = "#3C9";
+    this.right = this.x + this.width;
   }
 
   draw(context, xOffset) {
