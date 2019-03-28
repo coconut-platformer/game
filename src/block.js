@@ -5,12 +5,11 @@ export default class Block {
     this.width = width;
     this.height = height;
     this.backgroundColor = "#3C9";
-    this.right = this.x + this.width;
   }
 
-  draw(context, xOffset) {
+  draw(context) {
     context.fillStyle = this.backgroundColor;
-    context.fillRect(xOffset + this.x, this.y, this.width, this.height);
+    context.fillRect(this.x, this.y, this.width, this.height);
   }
 
   points() {
