@@ -16,17 +16,17 @@ export default class Physics {
 
     physicsBlock.setAcceleration(
       (physicsBlock.acceleration.x + this.gravity.x) * physicsBlock.mass,
-      (physicsBlock.acceleration.y + this.gravity.y) * physicsBlock.mass,
+      (physicsBlock.acceleration.y + this.gravity.y) * physicsBlock.mass
     );
 
     const velocity = physicsBlock.getVelocity(this.friction);
-    const timeScale = timeStep * timeStep / 1000;
+    const timeScale = (timeStep * timeStep) / 1000;
     const acceleration = {
       x: physicsBlock.acceleration.x * timeScale,
-      y: physicsBlock.acceleration.y * timeScale,
+      y: physicsBlock.acceleration.y * timeScale
     };
-    const x = physicsBlock.position().x + velocity.x + acceleration.x;
-    const y = physicsBlock.position().y + velocity.y + acceleration.y;
+    const x = physicsBlock.x + velocity.x + acceleration.x;
+    const y = physicsBlock.y + velocity.y + acceleration.y;
     physicsBlock.move(x, y);
     physicsBlock.setAcceleration(0, 0);
 
@@ -34,15 +34,13 @@ export default class Physics {
     const highest = collisions.reduce((highest, collision) => {
       const worldBlock = collision.block;
       if (!highest) return worldBlock;
-      return highest.position().y < worldBlock.position().y ?
-        highest :
-        worldBlock;
+      return highest.y < worldBlock.y ? highest : worldBlock;
     }, null);
 
     if (highest) {
-      const highestY = highest.position().y - physicsBlock.height;
-      if (physicsBlock.position().y > highestY) {
-        physicsBlock.move(physicsBlock.position().x, highestY);
+      const highestY = highest.y - physicsBlock.height;
+      if (physicsBlock.y > highestY) {
+        physicsBlock.move(physicsBlock.x, highestY);
         physicsBlock.removeVelocity();
         physicsBlock.setInteractions(true);
       }

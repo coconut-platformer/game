@@ -26,6 +26,13 @@ export default class Block {
     this._points = makePoints(x, y, width, height);
   }
 
+  get x() {
+    return this._points.topLeft.x;
+  }
+  get y() {
+    return this._points.topLeft.y;
+  }
+
   position() {
     return this._points.topLeft;
   }
@@ -36,10 +43,7 @@ export default class Block {
 
   draw(context) {
     context.fillStyle = this.backgroundColor;
-    const {
-      x,
-      y
-    } = this.position();
+    const { x, y } = this.position();
     context.fillRect(x, y, this.width, this.height);
   }
 
@@ -48,10 +52,7 @@ export default class Block {
   }
 
   overlaps(other) {
-    const {
-      topLeft,
-      bottomRight
-    } = this.points();
+    const { topLeft, bottomRight } = this.points();
     return Object.values(other.points()).some(point => {
       return (
         point.x >= topLeft.x &&

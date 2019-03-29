@@ -21,7 +21,6 @@ assetManager
 
 function runGame() {
   const coconut = new Coconut(assetManager.getImage("coconut"));
-  const physics = new Physics(5, 2, world);
   const timestep = 1000 / 60;
   const timer = new Timer();
   const world = new World();
