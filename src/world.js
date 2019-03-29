@@ -26,7 +26,6 @@ export default class World {
 
   addNextCloud() {
     const cloud = new Cloud(this.assetManager.getImage('cloud-1'), 1024, Math.random() * 600, Math.random() * 10);
-    this.clouds.push(cloud);
     this.clouds = this.clouds.concat(cloud).sort((a, b) => b.distance - a.distance);
   }
 
