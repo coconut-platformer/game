@@ -4,6 +4,8 @@ export default class Cloud {
     this.x = x;
     this.y = y;
     this.distance = distance;
+    this.width = this.image.width / this.distance;
+    this.height = this.image.height / this.distance;
   }
 
   draw(context) {
@@ -11,8 +13,8 @@ export default class Cloud {
       this.image,
       this.x,
       this.y,
-      this.image.width / this.distance,
-      this.image.height / this.distance
+      this.width,
+      this.height
     );
   }
 

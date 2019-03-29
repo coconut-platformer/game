@@ -6,7 +6,7 @@ import MathHelpers from "./mathHelpers";
 
 const TERRAIN_BLOCK_SIZE = 128;
 const WORLD_HEIGHT = 2;
-const WORLD_TOP = 120;
+const WORLD_TOP = 250;
 const WORLD_BOTTOM = TERRAIN_BLOCK_SIZE * WORLD_HEIGHT + WORLD_TOP;
 const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
@@ -20,12 +20,17 @@ export default class World {
   init() {
     for (let i = 0; i <= BLOCK_COUNT; i++) {
       this.addNextBlock();
-      this.addNextCloud();
+      this.addNextCloud(0);
     }
   }
 
-  addNextCloud() {
-    const cloud = new Cloud(this.assetManager.getImage('cloud-1'), 1024, Math.random() * 600, Math.random() * 10);
+  addNextCloud(xOffset = 1024) {
+    const cloud = new Cloud(
+      this.assetManager.getImage('cloud-1'),
+      MathHelpers.randomIntegerBetween(xOffset, 1024),
+      Math.random() * 400,
+      Math.random() * 10
+    );
     this.clouds = this.clouds.concat(cloud).sort((a, b) => b.distance - a.distance);
   }
 
@@ -65,7 +70,6 @@ export default class World {
     this.updateClouds();
 
     this.clouds.forEach(cloud => cloud.updatePosition(xAmount / 2));
-    // if math.random() > 0.9 then addCloud()
   }
 
   updateBlockList() {
@@ -79,13 +83,11 @@ export default class World {
         this.addNextBlock();
       }
     }
-
-    // if any clouds off screen, remove them
   }
 
   updateClouds() {
     this.clouds.forEach((cloud, index) => {
-      if (cloud.x + cloud.image.width < 0) {
+      if ((cloud.x + cloud.width) < 0) {
         this.clouds.splice(index, 1);
         this.addNextCloud();
       }
