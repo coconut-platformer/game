@@ -5,11 +5,11 @@ const TERRAIN_BLOCK_SIZE = 64;
 const WORLD_HEIGHT = 5;
 const WORLD_TOP = 350;
 const WORLD_BOTTOM = TERRAIN_BLOCK_SIZE * WORLD_HEIGHT + WORLD_TOP;
+const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
 export default class World {
   constructor() {
     this.blocks = [];
-    const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
     for (let i = 0; i <= BLOCK_COUNT; i++) {
       this.addNextBlock();
@@ -45,28 +45,29 @@ export default class World {
   }
 
   updateBlockList() {
-    if (this.blocks[0].position().x < 0) {
-      const {
-        topRight
-      } = this.blocks[0].points();
+      if (this.blocks[0].position().x < 0) {
+        const {
+          topRight
+        } = this.blocks[0].points();
 
-      if (topRight.x < 0) {
-        this.blocks = this.blocks.slice(1);
-        this.addNextBlock();
-      }
-    }
-
-    collision(block) {
-      const collisions = [];
-      for (let index = 0; index < this.blocks.length; index++) {
-        const worldBlock = this.blocks[index];
-        if (worldBlock.overlaps(block)) {
-          collisions.push(worldBlock);
-          if (collisions.length === 2) {
-            break;
-          }
+        if (topRight.x < 0) {
+          this.blocks = this.blocks.slice(1);
+          this.addNextBlock();
         }
       }
-      return collisions;
-    }
-  }
+
+      collision(block) {
+        const collisions = [];
+        for (let index = 0; index < this.blocks.length; index++) {
+          const worldBlock = this.blocks[index];
+          if (worldBlock.overlaps(block)) {
+            collisions.push({
+              block: worldBlock
+            });
+            if (collisions.length === 2) {
+              break;
+            }
+          }
+          return collisions;
+        }
+      }

@@ -20,10 +20,16 @@ assetManager
   .catch(console.error);
 
 function runGame() {
-  let coconut = new Coconut(assetManager.getImage("coconut"));
-  let world = new World();
+  const coconut = new Coconut(assetManager.getImage("coconut"));
   const physics = new Physics(5, 2, world);
+  const timestep = 1000 / 60;
   const timer = new Timer();
+  const world = new World();
+  const gravity = {
+    x: 0,
+    y: .2
+  };
+  const physics = new Physics(gravity, 0.98, world);
 
   document.addEventListener("keydown", e => {
     if (e.key === " ") {
@@ -31,18 +37,20 @@ function runGame() {
     }
   });
 
-  const tick = () => {
-    const tick = (timestamp) => {
-      timer.addTime(timestamp);
-      const movement = timer.getDelta();
+  const tick = (timestamp) => {
+    timer.addTime(timestamp);
+    const movement = timer.getDelta();
 
-      context.fillStyle = "#fff";
-      context.fillRect(0, 0, 1024, 768);
-      world.draw(context);
-      coconut.draw(context);
-      world.updateDrawPosition(movement * -0.2);
-      requestAnimationFrame(tick);
-    };
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, 1024, 768);
+    world.draw(context);
+    coconut.draw(context);
+    timer.drainAccumulator(timestep, () => {
+      physics.integrate(coconut, timestep);
+    });
+    world.updateDrawPosition(movement * -0.2);
+    requestAnimationFrame(tick);
+  };
 
-    tick();
-  }
+  tick();
+}
