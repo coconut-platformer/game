@@ -12,7 +12,7 @@ export default class Coconut extends PhysicsBlock {
   }
 
   draw(context) {
-    context.drawImage(this.coconut, this.x, this.y, this.width, this.height);
+    context.drawImage(this.coconut, this.x, this.y + 2, this.width, this.height);
   }
 
   bounce() {
