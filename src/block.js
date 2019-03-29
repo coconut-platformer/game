@@ -1,24 +1,54 @@
+const makePoints = (x, y, width, height) => ({
+  topLeft: {
+    x,
+    y
+  },
+  topRight: {
+    x: x + width,
+    y
+  },
+  bottomRight: {
+    x: x + width,
+    y: y + height
+  },
+  bottomLeft: {
+    x,
+    y: y + height
+  }
+});
+
 export default class Block {
   constructor(x, y, width, height) {
-    this.x = x;
-    this.y = y;
     this.width = width;
     this.height = height;
     this.backgroundColor = "#3C9";
+
+    this._points = makePoints(x, y, width, height);
+  }
+
+  get x() {
+    return this._points.topLeft.x;
+  }
+  get y() {
+    return this._points.topLeft.y;
+  }
+
+  position() {
+    return this._points.topLeft;
+  }
+
+  move(x, y) {
+    this._points = makePoints(x, y, this.width, this.height);
   }
 
   draw(context) {
     context.fillStyle = this.backgroundColor;
-    context.fillRect(this.x, this.y, this.width, this.height);
+    const { x, y } = this.position();
+    context.fillRect(x, y, this.width, this.height);
   }
 
   points() {
-    return {
-      topLeft: { x: this.x, y: this.y },
-      topRight: { x: this.x + this.width, y: this.y },
-      bottomRight: { x: this.x + this.width, y: this.y + this.height },
-      bottomLeft: { x: this.x, y: this.y + this.height }
-    };
+    return this._points;
   }
 
   overlaps(other) {

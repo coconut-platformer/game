@@ -5,11 +5,11 @@ const TERRAIN_BLOCK_SIZE = 64;
 const WORLD_HEIGHT = 5;
 const WORLD_TOP = 350;
 const WORLD_BOTTOM = TERRAIN_BLOCK_SIZE * WORLD_HEIGHT + WORLD_TOP;
+const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
 export default class World {
   constructor() {
     this.blocks = [];
-    const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
     for (let i = 0; i <= BLOCK_COUNT; i++) {
       this.addNextBlock();
@@ -20,9 +20,12 @@ export default class World {
     const lastBlock = this.blocks.slice(-1)[0];
     const lastY = lastBlock
       ? lastBlock.y
-      : MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE + WORLD_TOP;
+      : MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE +
+        WORLD_TOP;
     const x = lastBlock ? lastBlock.x + TERRAIN_BLOCK_SIZE : 0;
-    const nextY = lastY + MathHelpers.randomIntegerBetween(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
+    const nextY =
+      lastY +
+      MathHelpers.randomIntegerBetween(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
     const block = new Block(
       x,
       nextY < WORLD_TOP || nextY > WORLD_BOTTOM ? lastY : nextY,
@@ -39,17 +42,19 @@ export default class World {
   }
 
   updateDrawPosition(xAmount = -1) {
-    this.blocks.map((block) => {
-      return block.x += xAmount;
-    });
+    this.blocks.forEach(b => b.move(b.x + xAmount, b.y));
 
     this.updateBlockList();
   }
 
   updateBlockList() {
-    if (this.blocks[0].points().topRight.x < 0) {
-      this.blocks = this.blocks.slice(1);
-      this.addNextBlock();
+    if (this.blocks[0].x < 0) {
+      const { topRight } = this.blocks[0].points();
+
+      if (topRight.x < 0) {
+        this.blocks = this.blocks.slice(1);
+        this.addNextBlock();
+      }
     }
   }
 
@@ -58,7 +63,9 @@ export default class World {
     for (let index = 0; index < this.blocks.length; index++) {
       const worldBlock = this.blocks[index];
       if (worldBlock.overlaps(block)) {
-        collisions.push(worldBlock);
+        collisions.push({
+          block: worldBlock
+        });
         if (collisions.length === 2) {
           break;
         }
