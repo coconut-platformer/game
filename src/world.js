@@ -86,12 +86,11 @@ export default class World {
   }
 
   updateClouds() {
-    this.clouds.forEach((cloud, index) => {
-      if ((cloud.x + cloud.width) < 0) {
-        this.clouds.splice(index, 1);
-        this.addNextCloud();
-      }
-    });
+    const cloudCount = this.clouds.length;
+    this.clouds = this.clouds.filter(c => (c.x + c.width) >= 0);
+    if (this.clouds.length < cloudCount) {
+      this.addNextCloud();
+    }
   }
 
   collision(block) {
