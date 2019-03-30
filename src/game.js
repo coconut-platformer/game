@@ -4,14 +4,6 @@ import Physics from "./physics";
 import World from "./world";
 import Timer from "./timer";
 import Cloud from './cloud';
-
-import coconutImage from "./assets/coconut.png";
-import lavaImage from "./assets/lava.png";
-import sandImage from "./assets/sand.png";
-import stoneImage from "./assets/stone.png";
-import skyImage from "./assets/sky@2x.png";
-import cloud1Image from "./assets/cloud-1.png";
-
 export default class Game {
   constructor(canvas, worldRate = -0.2) {
     this.canvas = canvas;
@@ -30,31 +22,8 @@ export default class Game {
 
   start() {
     this.assetManager
-      .loadImages([{
-          name: "coconut",
-          src: coconutImage
-        },
-        {
-          name: "lava",
-          src: lavaImage
-        },
-        {
-          name: "sand",
-          src: sandImage
-        },
-        {
-          name: "stone",
-          src: stoneImage
-        },
-        {
-          name: "sky",
-          src: skyImage
-        },
-        {
-          name: "cloud-1",
-          src: cloud1Image
-        }
-      ])
+      .selectImages(['coconut', 'lava', 'sand', 'stone', 'sky', 'cloud-1', 'cloud-2', 'cloud-3'])
+      .load()
       .then(() => this.runGame())
       .catch(console.error);
   }

@@ -25,8 +25,10 @@ export default class World {
   }
 
   addNextCloud(xOffset = 1024) {
+    const cloudNames =['cloud-1', 'cloud-2', 'cloud-3'];
+    const cloudName = cloudNames[Math.floor(Math.random() * cloudNames.length)]
     const cloud = new Cloud(
-      this.assetManager.getImage('cloud-1'),
+      this.assetManager.getImage(cloudName),
       MathHelpers.randomIntegerBetween(xOffset, 1024),
       Math.random() * 400,
       Math.random() * 10
