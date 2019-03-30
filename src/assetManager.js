@@ -1,29 +1,24 @@
+import ImageManager from './assets/imageManager';
+
 export default class AssetManager {
   constructor() {
     this.assets = {
-      images: {}
+      images: new ImageManager(),
     };
   }
 
-  loadImages(images) {
-    return Promise.all(images.map(image => this.loadImage(image)));
+  selectImages(images) {
+    this.assets.images.select(images);
+    return this;
   }
 
-  loadImage({ name, src }) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = src;
-
-      this.assets.images[name] = img;
-
-      console.log("loadImage", name, src);
-
-      img.onload = () => resolve();
-      img.onerror = () => reject();
-    });
+  load() {
+    return Promise.all([
+      this.assets.images.load(),
+    ]);
   }
 
   getImage(name) {
-    return this.assets.images[name];
+    return this.assets.images.get(name);
   }
 }
