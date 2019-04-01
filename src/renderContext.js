@@ -6,9 +6,7 @@ export default class RenderContext {
     this.depth = 0;
     this.alpha = 1.0;
     this.fill = this.context.fillStyle;
-    this.stroke = this.context.strokeStyle; >>>
-    >>>
-    > 5 d7a8fc...Add renderContext tests
+    this.stroke = this.context.strokeStyle;
 
     this.resetOperations();
   }

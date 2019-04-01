@@ -10,11 +10,11 @@ export default class Game {
   constructor(canvas, worldRate = -0.2) {
     this.canvas = canvas;
     this.context = new RenderContext(this.canvas);
-    this.context.addDepth("bg", 100);
-    this.context.addDepth("fg", 0);
-    this.context.addDepth("clouds", -5);
-    this.context.addDepth("overlay", -100);
-    this.context.addDepth("hud", -200);
+    this.context.addDepth('bg', 100);
+    this.context.addDepth('fg', 0);
+    this.context.addDepth('clouds', -2);
+    this.context.addDepth('overlay', -100);
+    this.context.addDepth('hud', -200);
 
     this.assetManager = new AssetManager();
     this.timestep = 1000 / 60;

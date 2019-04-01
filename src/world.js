@@ -45,10 +45,10 @@ export default class World {
 
   addNextBlock() {
     const lastBlock = this.blocks.slice(-1)[0];
-    const lastY = lastBlock
-      ? lastBlock.y
-      : MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE +
-        WORLD_TOP;
+    const lastY = lastBlock ?
+      lastBlock.y :
+      MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE +
+      WORLD_TOP;
     const x = lastBlock ? lastBlock.x + TERRAIN_BLOCK_SIZE : 0;
     const nextY =
       lastY +
@@ -73,9 +73,11 @@ export default class World {
   draw(context) {
     context
       .atDepth('clouds', (setZ) => {
-        this.clouds.forEach(cloud => {
-          setZ(cloud.distance);
-          cloud.draw(context);
+        context.withTransparency(0.8, () => {
+          this.clouds.forEach(cloud => {
+            setZ(cloud.distance);
+            cloud.draw(context);
+          });
         });
       })
       .atDepth('fg', () => {
@@ -96,7 +98,9 @@ export default class World {
 
   updateBlockList() {
     if (this.blocks[0].x < 0) {
-      const { topRight } = this.blocks[0].points();
+      const {
+        topRight
+      } = this.blocks[0].points();
 
       if (topRight.x < 0) {
         this.blocks = this.blocks.slice(1);
