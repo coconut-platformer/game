@@ -4,6 +4,7 @@ import Physics from "./physics";
 import World from "./world";
 import Timer from "./timer";
 import Cloud from './cloud';
+
 export default class Game {
   constructor(canvas, worldRate = -0.2) {
     this.canvas = canvas;
@@ -22,7 +23,7 @@ export default class Game {
 
   start() {
     this.assetManager
-      .selectImages(['coconut', 'lava', 'sand', 'stone', 'sky', 'cloud-1', 'cloud-2', 'cloud-3'])
+      .selectImages(['coconut', 'lava', 'sand', 'stone', 'sky', 'cloud-1', 'cloud-2'])
       .load()
       .then(() => this.runGame())
       .catch(console.error);
