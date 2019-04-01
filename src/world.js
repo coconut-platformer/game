@@ -2,6 +2,11 @@ import Block from "./block";
 import Cloud from "./cloud";
 
 import TerrainBlock from "./terrainBlock";
+import BlockDecoration from "./decorations/blockDecoration";
+import ShrubDecoration from "./decorations/shrub";
+import TreeDecoration from "./decorations/tree";
+import RockDecoration from "./decorations/rock";
+
 import MathHelpers from "./mathHelpers";
 
 const TERRAIN_BLOCK_SIZE = 128;
@@ -25,34 +30,43 @@ export default class World {
   }
 
   addNextCloud(xOffset = 1024) {
-    const cloudNames = ['cloud-1', 'cloud-2'];
-    const cloudName = cloudNames[Math.floor(Math.random() * cloudNames.length)]
+    const cloudNames = ["cloud-1", "cloud-2"];
+    const cloudName = cloudNames[Math.floor(Math.random() * cloudNames.length)];
     const cloud = new Cloud(
       this.assetManager.getImage(cloudName),
       MathHelpers.randomIntegerBetween(xOffset, 1024),
       Math.random() * 400,
       Math.random() * 10
     );
-    this.clouds = this.clouds.concat(cloud).sort((a, b) => b.distance - a.distance);
+    this.clouds = this.clouds
+      .concat(cloud)
+      .sort((a, b) => b.distance - a.distance);
   }
 
   addNextBlock() {
     const lastBlock = this.blocks.slice(-1)[0];
-    const lastY = lastBlock ?
-      lastBlock.y :
-      MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE +
-      WORLD_TOP;
+    const lastY = lastBlock
+      ? lastBlock.y
+      : MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE +
+        WORLD_TOP;
     const x = lastBlock ? lastBlock.x + TERRAIN_BLOCK_SIZE : 0;
     const nextY =
       lastY +
       MathHelpers.randomIntegerBetween(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
     const block = new TerrainBlock(
-      this.assetManager.getImage(Math.random() > 0.5 ? 'sand' : 'lava'),
+      this.assetManager.getImage(Math.random() > 0.5 ? "sand" : "lava"),
       x,
       nextY < WORLD_TOP || nextY > WORLD_BOTTOM ? lastY : nextY,
       TERRAIN_BLOCK_SIZE,
       TERRAIN_BLOCK_SIZE
     );
+    const decos = [
+      null,
+      new ShrubDecoration(this.assetManager),
+      new TreeDecoration(this.assetManager),
+      new RockDecoration(this.assetManager)
+    ];
+    block.addDecoration(decos[Math.floor(Math.random() * decos.length)]);
     this.blocks.push(block);
   }
 
@@ -76,9 +90,7 @@ export default class World {
 
   updateBlockList() {
     if (this.blocks[0].x < 0) {
-      const {
-        topRight
-      } = this.blocks[0].points();
+      const { topRight } = this.blocks[0].points();
 
       if (topRight.x < 0) {
         this.blocks = this.blocks.slice(1);
@@ -89,7 +101,7 @@ export default class World {
 
   updateClouds() {
     const cloudCount = this.clouds.length;
-    this.clouds = this.clouds.filter(c => (c.x + c.width) >= 0);
+    this.clouds = this.clouds.filter(c => c.x + c.width >= 0);
     if (this.clouds.length < cloudCount) {
       this.addNextCloud();
     }

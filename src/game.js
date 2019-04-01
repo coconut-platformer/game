@@ -3,7 +3,7 @@ import Coconut from "./coconut";
 import Physics from "./physics";
 import World from "./world";
 import Timer from "./timer";
-import Cloud from './cloud';
+import Cloud from "./cloud";
 
 export default class Game {
   constructor(canvas, worldRate = -0.2) {
@@ -23,7 +23,18 @@ export default class Game {
 
   start() {
     this.assetManager
-      .selectImages(['coconut', 'lava', 'sand', 'stone', 'sky', 'cloud-1', 'cloud-2'])
+      .selectImages([
+        "coconut",
+        "lava",
+        "sand",
+        "stone",
+        "sky",
+        "cloud-1",
+        "cloud-2",
+        "rock",
+        "tree",
+        "shrub"
+      ])
       .load()
       .then(() => this.runGame())
       .catch(console.error);
@@ -46,7 +57,7 @@ export default class Game {
     this.timer.addTime(timestamp);
     const movement = this.timer.getDelta();
 
-    this.context.drawImage(this.assetManager.getImage('sky'), 0, 0, 1024, 768);
+    this.context.drawImage(this.assetManager.getImage("sky"), 0, 0, 1024, 768);
     this.world.draw(this.context);
     this.coconut.draw(this.context);
 
@@ -56,6 +67,6 @@ export default class Game {
 
     this.world.updateDrawPosition(movement * this.worldRate);
 
-    requestAnimationFrame((ts) => this.tick(ts));
-  };
+    requestAnimationFrame(ts => this.tick(ts));
+  }
 }

@@ -61,4 +61,13 @@ export default class Block {
       );
     });
   }
+
+  addDecoration(decoration) {
+    this.decoration = decoration;
+  }
+
+  drawDecoration(context) {
+    if (!this.decoration) return;
+    this.decoration.draw(context, this.x, this.y);
+  }
 }
