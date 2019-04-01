@@ -71,12 +71,18 @@ export default class World {
   }
 
   draw(context) {
-    this.clouds.forEach(cloud => {
-      cloud.draw(context);
-    });
-    this.blocks.forEach(block => {
-      block.draw(context);
-    });
+    context
+      .atDepth('clouds', (setZ) => {
+        this.clouds.forEach(cloud => {
+          setZ(cloud.distance);
+          cloud.draw(context);
+        });
+      })
+      .atDepth('fg', () => {
+        this.blocks.forEach(block => {
+          block.draw(context);
+        });
+      });
   }
 
   updateDrawPosition(xAmount = -1) {
