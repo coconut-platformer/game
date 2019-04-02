@@ -20,6 +20,14 @@ export default class Coconut extends PhysicsBlock {
     return this._mass * this.massScale;
   }
 
+  advance(amount) {
+    const {
+      y
+    } = this.previous;
+    this.move(this.x + amount, this.y);
+    this.previous.y = y;
+  }
+
   draw(context) {
     this.drawDecoration(context);
     context.drawImage(

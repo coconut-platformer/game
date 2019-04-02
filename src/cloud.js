@@ -1,11 +1,9 @@
-export default class Cloud {
+import Block from './block';
+export default class Cloud extends Block {
   constructor(image, x, y, distance) {
+    super(x, y, image.width / distance, image.height / distance);
     this.image = image;
-    this.x = x;
-    this.y = y;
     this.distance = distance;
-    this.width = this.image.width / this.distance;
-    this.height = this.image.height / this.distance;
   }
 
   draw(context) {

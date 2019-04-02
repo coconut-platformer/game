@@ -13,29 +13,32 @@ const TERRAIN_BLOCK_SIZE = 128;
 const WORLD_HEIGHT = 2;
 const WORLD_TOP = 250;
 const WORLD_BOTTOM = TERRAIN_BLOCK_SIZE * WORLD_HEIGHT + WORLD_TOP;
-const BLOCK_COUNT = Math.ceil(1024 / TERRAIN_BLOCK_SIZE);
 
 export default class World {
-  constructor(assetManager) {
+  constructor(assetManager, camera) {
     this.blocks = [];
     this.clouds = [];
     this.assetManager = assetManager;
+    this.camera = camera;
+
   }
 
   init() {
-    for (let i = 0; i <= BLOCK_COUNT; i++) {
+    const count = (this.camera.width / TERRAIN_BLOCK_SIZE) + 10;
+    for (let i = 0; i <= count; i++) {
       this.addNextBlock();
       this.addNextCloud(0);
     }
   }
 
-  addNextCloud(xOffset = 1024) {
+  addNextCloud() {
     const cloudNames = ["cloud-1", "cloud-2"];
     const cloudName = cloudNames[Math.floor(Math.random() * cloudNames.length)];
+    const y = (Math.random() * this.camera.height * 2) + this.camera.y - (this.camera.height / 2);
     const cloud = new Cloud(
       this.assetManager.getImage(cloudName),
-      MathHelpers.randomIntegerBetween(xOffset, 1024),
-      Math.random() * 400,
+      this.camera.right() + Math.random() * this.camera.width * 2,
+      y,
       Math.random() * 10
     );
     this.clouds = this.clouds
@@ -56,7 +59,7 @@ export default class World {
     const block = new TerrainBlock(
       this.assetManager.getImage(Math.random() > 0.5 ? "sand" : "lava"),
       x,
-      nextY < WORLD_TOP || nextY > WORLD_BOTTOM ? lastY : nextY,
+      nextY,
       TERRAIN_BLOCK_SIZE,
       TERRAIN_BLOCK_SIZE
     );
@@ -71,6 +74,9 @@ export default class World {
   }
 
   draw(context) {
+    this.updateBlockList();
+    this.updateClouds();
+
     context
       .atDepth('clouds', (setZ) => {
         context.withTransparency(0.8, () => {
@@ -88,32 +94,36 @@ export default class World {
   }
 
   updateDrawPosition(xAmount = -1) {
-    this.blocks.forEach(b => b.move(b.x + xAmount, b.y));
+    // this.blocks.forEach(b => b.move(b.x + xAmount, b.y));
 
-    this.updateBlockList();
-    this.updateClouds();
 
-    this.clouds.forEach(cloud => cloud.updatePosition(xAmount / 2));
+    //     this.clouds.forEach(cloud => cloud.updatePosition(xAmount / 2));
   }
 
   updateBlockList() {
-    if (this.blocks[0].x < 0) {
-      const {
-        topRight
-      } = this.blocks[0].points();
-
-      if (topRight.x < 0) {
-        this.blocks = this.blocks.slice(1);
-        this.addNextBlock();
-      }
+    const padding = 2 * TERRAIN_BLOCK_SIZE;
+    const left = this.camera.points().topLeft.x - padding;
+    const right = this.camera.right() + padding;
+    const original = this.blocks.length;
+    this.blocks = this.blocks.filter(b => b.right() >= left)
+    const diff = original - this.blocks.length;
+    for (let i = 0; i < diff; i++) {
+      this.addNextBlock();
     }
   }
 
   updateClouds() {
-    const cloudCount = this.clouds.length;
-    this.clouds = this.clouds.filter(c => c.x + c.width >= 0);
-    if (this.clouds.length < cloudCount) {
-      this.addNextCloud();
+    const padding = 2 * TERRAIN_BLOCK_SIZE;
+    const left = this.camera.points().topLeft.x - padding;
+    const right = this.camera.right() + padding;
+    const original = this.clouds.length
+    this.clouds = this.clouds.filter(b => b.right() >= left)
+    if ((original !== this.clouds.length || this.clouds.length === 0) && Math.random() > 0.7) {
+      const count = Math.round(Math.random() * 5)
+      for (let i = 0; i < count; i++) {
+        this.addNextCloud();
+      }
+
     }
   }
 

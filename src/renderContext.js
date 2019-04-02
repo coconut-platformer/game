@@ -1,5 +1,5 @@
 export default class RenderContext {
-  constructor(canvas) {
+  constructor(canvas, camera) {
     this.context = canvas.getContext('2d');
 
     this.depths = [];
@@ -7,6 +7,7 @@ export default class RenderContext {
     this.alpha = 1.0;
     this.fill = this.context.fillStyle;
     this.stroke = this.context.strokeStyle;
+    this.camera = camera;
 
     this.resetOperations();
   }
@@ -57,6 +58,7 @@ export default class RenderContext {
         alpha: this.alpha,
         fillStyle: this.fill,
         strokeStyle: this.stroke,
+        transform: this.transform,
       },
       ...args,
     ]);
@@ -93,11 +95,17 @@ export default class RenderContext {
           this.context.strokeStyle = args[0];
           break;
         case 'drawImage':
-          this.context.drawImage(...args);
-          break;
+          {
+            const [image, x, y, ...rest] = args;
+            this.context.drawImage(image, x - this.camera.x, y - this.camera.y, ...rest);
+            break;
+          }
         case 'fillRect':
-          this.context.fillRect(...args);
-          break;
+          {
+            const [x, y, ...rest] = args;
+            this.context.fillRect(x - this.camera.x, y - this.camera.y, ...rest);
+            break;
+          }
       }
     });
 
