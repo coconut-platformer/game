@@ -66,6 +66,10 @@ export default class Block {
     this.decoration = decoration;
   }
 
+  removeDecoration() {
+    this.addDecoration(null);
+  }
+
   drawDecoration(context) {
     if (!this.decoration) return;
     this.decoration.draw(context, this.x, this.y);

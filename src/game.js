@@ -10,11 +10,11 @@ export default class Game {
   constructor(canvas, worldRate = -0.2) {
     this.canvas = canvas;
     this.context = new RenderContext(this.canvas);
-    this.context.addDepth('bg', 100);
-    this.context.addDepth('fg', 0);
-    this.context.addDepth('clouds', -2);
-    this.context.addDepth('overlay', -100);
-    this.context.addDepth('hud', -200);
+    this.context.addDepth("bg", 100);
+    this.context.addDepth("fg", 0);
+    this.context.addDepth("clouds", -2);
+    this.context.addDepth("overlay", -100);
+    this.context.addDepth("hud", -200);
 
     this.assetManager = new AssetManager();
     this.timestep = 1000 / 60;
@@ -26,6 +26,8 @@ export default class Game {
       y: 0.2
     };
     this.physics = new Physics(this.gravity, 0.98, this.world);
+    this.keyPressed = false;
+    this.keyUp = false;
   }
 
   start() {
@@ -40,7 +42,8 @@ export default class Game {
         "cloud-2",
         "rock",
         "tree",
-        "shrub"
+        "shrub",
+        "umbrella"
       ])
       .load()
       .then(() => this.runGame())
@@ -53,7 +56,14 @@ export default class Game {
 
     document.addEventListener("keydown", e => {
       if (e.key === " ") {
-        this.coconut.jump();
+        this.keyPressed = true;
+      }
+    });
+
+    document.addEventListener("keyup", e => {
+      if (e.key === " ") {
+        this.keyPressed = false;
+        this.keyUp = true;
       }
     });
 
@@ -64,33 +74,14 @@ export default class Game {
     this.timer.addTime(timestamp);
     const movement = this.timer.getDelta();
 
-    this.context.atDepth("bg", () => {
-      this.context.drawImage(
-        this.assetManager.getImage("sky"),
-        0,
-        0,
-        1024,
-        768
-      );
-    });
-    this.world.draw(this.context);
-    this.context.atDepth("fg", () => {
-      this.coconut.draw(this.context);
-    });
-    this.context.commit();
+    if (this.keyPressed) {
+      this.coconut.interact(this.assetManager);
+    }
 
-    this.timer.drainAccumulator(this.timestep, () => {
-      this.physics.integrate(this.coconut, this.timestep);
-    });
-
-    this.world.updateDrawPosition(movement * this.worldRate);
-
-    requestAnimationFrame(ts => this.tick(ts));
-  }
-
-  tick(timestamp) {
-    this.timer.addTime(timestamp);
-    const movement = this.timer.getDelta();
+    if (this.keyUp) {
+      this.coconut.cancel();
+      this.keyUp = false;
+    }
 
     this.context.atDepth("bg", () => {
       this.context.drawImage(
@@ -108,7 +99,7 @@ export default class Game {
     this.context.commit();
 
     this.timer.drainAccumulator(this.timestep, () => {
-      this.physics.integrate(this.coconut, this.timestep);
+      this.physics.integrate([this.coconut], this.timestep);
     });
 
     this.world.updateDrawPosition(movement * this.worldRate);

@@ -5,7 +5,13 @@ export default class Physics {
     this.world = world;
   }
 
-  integrate(physicsBlock, timeStep) {
+  integrate(dynamicBlocks, timeStep) {
+    dynamicBlocks.forEach(physBlock =>
+      this.integrateBlock(physBlock, timeStep)
+    );
+  }
+
+  integrateBlock(physicsBlock, timeStep) {
     if (!physicsBlock.hasMass()) {
       physicsBlock.acceleration = {
         x: 0,
@@ -30,6 +36,10 @@ export default class Physics {
     physicsBlock.move(x, y);
     physicsBlock.setAcceleration(0, 0);
 
+    this.collideBlock(physicsBlock);
+  }
+
+  collideBlock(physicsBlock) {
     const collisions = this.world.collision(physicsBlock);
     const highest = collisions.reduce((highest, collision) => {
       const worldBlock = collision.block;
@@ -40,12 +50,14 @@ export default class Physics {
     if (highest) {
       const highestY = highest.y - physicsBlock.height;
       if (physicsBlock.y > highestY) {
-        physicsBlock.move(physicsBlock.x, highestY);
-        physicsBlock.removeVelocity();
-        physicsBlock.setInteractions(true);
+        physicsBlock.onTouch(highest, highestY);
+        // physicsBlock.move(physicsBlock.x, highestY);
+        // physicsBlock.removeVelocity();
+        // physicsBlock.setInteractions(true);
       }
     } else {
-      physicsBlock.setInteractions(false);
+      // physicsBlock.setInteractions(false);
+      physicsBlock.onNotTouch();
     }
   }
 }

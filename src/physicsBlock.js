@@ -9,17 +9,15 @@ export default class PhysicsBlock extends Block {
       x: 0,
       y: 0
     };
-    this.mass = mass;
+    this._mass = mass;
     this.friction = friction;
-    this.interactions = false;
   }
 
-  setInteractions(interactions) {
-    this.interactions = interactions;
+  get mass() {
+    return this._mass;
   }
-
-  canInteract() {
-    return this.interactions;
+  set mass(val) {
+    this._mass = val;
   }
 
   move(x, y) {
@@ -55,4 +53,8 @@ export default class PhysicsBlock extends Block {
       y: this.acceleration.y + y
     };
   }
+
+  onTouch(block, contactY) {}
+
+  onNotTouch() {}
 }
