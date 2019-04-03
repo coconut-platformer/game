@@ -1,3 +1,5 @@
+import Ai from "./ai.js";
+import Human from "./human.js";
 import AssetManager from "./assetManager";
 import Coconut from "./coconut";
 import Physics from "./physics";
@@ -54,21 +56,15 @@ export default class Game {
 
   runGame() {
     this.world.init();
-    this.coconut = new Coconut(this.assetManager.getImage("coconut"));
-    this.camera.centerOn(this.coconut)
-
-    document.addEventListener("keydown", e => {
-      if (e.key === " ") {
-        this.keyPressed = true;
-      }
-    });
-
-    document.addEventListener("keyup", e => {
-      if (e.key === " ") {
-        this.keyPressed = false;
-        this.keyUp = true;
-      }
-    });
+    this.ai = new Ai(
+      new Coconut(this.assetManager.getImage("coconut")),
+      this.assetManager
+    );
+    this.player = new Human(
+      new Coconut(this.assetManager.getImage("coconut")),
+      this.assetManager
+    );
+    this.camera.centerOn(this.player.avatar);
 
     this.tick();
   }
@@ -77,16 +73,11 @@ export default class Game {
     this.timer.addTime(timestamp);
     const movement = this.timer.getDelta();
 
-    this.coconut.advance(movement * this.worldRate);
+    this.ai.avatar.advance(movement * this.worldRate);
+    this.ai.tick(this.world.blocks);
 
-    if (this.keyPressed) {
-      this.coconut.interact(this.assetManager);
-    }
-
-    if (this.keyUp) {
-      this.coconut.cancel();
-      this.keyUp = false;
-    }
+    this.player.avatar.advance(movement * this.worldRate);
+    this.player.tick(this.world.blocks);
 
     this.context.atDepth("bg", () => {
       this.context.drawImage(
@@ -94,18 +85,24 @@ export default class Game {
         this.camera.x,
         this.camera.y,
         this.camera.width + 20,
-        this.camera.height + 20,
+        this.camera.height + 20
       );
     });
     this.world.draw(this.context);
     this.context.atDepth("fg", () => {
-      this.coconut.draw(this.context);
+      this.context.withTransparency(0.5, () => {
+        this.ai.avatar.draw(this.context);
+      });
+      this.player.avatar.draw(this.context);
     });
 
     this.timer.drainAccumulator(this.timestep, () => {
-      this.physics.integrate([this.coconut], this.timestep);
+      this.physics.integrate(
+        [this.ai.avatar, this.player.avatar],
+        this.timestep
+      );
     });
-    this.camera.stepTowards(this.coconut);
+    this.camera.stepTowards(this.player.avatar);
 
     this.context.commit();
 
