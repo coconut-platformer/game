@@ -21,9 +21,7 @@ export default class Coconut extends PhysicsBlock {
   }
 
   advance(amount) {
-    const {
-      y
-    } = this.previous;
+    const { y } = this.previous;
     this.move(this.x + amount, this.y);
     this.previous.y = y;
   }
@@ -59,7 +57,7 @@ export default class Coconut extends PhysicsBlock {
   umbrella(assetManager) {
     if (!this.canUmbrella) return;
     if (this.getVelocity().y < 0) return;
-    console.log("umbrella");
+    this.removeVelocity();
 
     this.addDecoration(new Umbrella(assetManager));
 
@@ -67,9 +65,8 @@ export default class Coconut extends PhysicsBlock {
     this.canUmbrella = false;
   }
 
-  jump(assetManager) {
+  jump() {
     if (!this.canJump) return;
-    console.log("jump");
 
     this.addAcceleration(0, -5);
     this.canUmbrella = true;
