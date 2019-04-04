@@ -47,7 +47,8 @@ export default class Game {
         "rock",
         "tree",
         "shrub",
-        "umbrella"
+        "umbrella",
+        "water",
       ])
       .load()
       .then(() => this.runGame())

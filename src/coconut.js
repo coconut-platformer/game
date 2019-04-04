@@ -1,5 +1,5 @@
 import PhysicsBlock from "./physicsBlock";
-import Umbrella from "./decorations/umbrella";
+import Umbrella from "./terrain/decorations/umbrella";
 
 const COCONUT_SIZE = 50;
 
