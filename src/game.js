@@ -1,13 +1,12 @@
 import Ai from './ai.js';
-import Human from './human.js';
 import AssetManager from './assetManager';
-import Coconut from './coconut';
-import Physics from './physics';
-import World from './world';
-import Timer from './timer';
-import Cloud from './cloud';
-import RenderContext from './renderContext';
 import Camera from './camera';
+import Coconut from './coconut';
+import Human from './human.js';
+import Physics from './physics';
+import RenderContext from './renderContext';
+import Timer from './timer';
+import World from './world';
 
 export default class Game {
   constructor(canvas, worldRate = 0.2) {
@@ -40,7 +39,9 @@ export default class Game {
         'coconut',
         'lava',
         'sand',
+        'sand-2',
         'stone',
+        'stone-2',
         'sky',
         'cloud-1',
         'cloud-2',
