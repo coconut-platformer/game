@@ -78,9 +78,10 @@ export default class TerrainGenerator {
       },
     ];
 
-    if (direction === DOWN && Math.random() < 0.8) {
-      return danger[Math.floor(Math.random() * danger.length)]();
+    const rnd = MathHelpers.randomIntegerBetween(0, 10);
+    if (direction === DOWN && rnd < 8) {
+      return danger[MathHelpers.randomIntegerBetween(0, danger.length - 1)]();
     }
-    return safe[Math.floor(Math.random() * safe.length)]();
+    return safe[MathHelpers.randomIntegerBetween(0, safe.length - 1)]();
   }
 }
