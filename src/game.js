@@ -107,8 +107,6 @@ export default class Game {
 
     this.context.commit();
 
-    // this.world.updateDrawPosition(movement * this.worldRate);
-
     requestAnimationFrame(ts => this.tick(ts));
   }
 }

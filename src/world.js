@@ -64,8 +64,6 @@ export default class World {
   }
 
   updateDrawPosition(xAmount = -1) {
-    // this.blocks.forEach(b => b.move(b.x + xAmount, b.y));
-
 
     //     this.clouds.forEach(cloud => cloud.updatePosition(xAmount / 2));
   }
