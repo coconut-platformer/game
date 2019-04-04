@@ -23,7 +23,7 @@ export default class Camera extends Box {
   }
 
   centerOn(block) {
-    this.move(block.x - (this.width / 2), block.y - (this.height / 2));
+    this.move(block.x - this.width / 2, block.y - this.height / 2);
   }
 
   stepTowards(block) {
@@ -32,7 +32,7 @@ export default class Camera extends Box {
 
     this.centerOn({
       x: block.x,
-      y: center.y + (yDiff / 10),
+      y: center.y + yDiff / 10,
     });
   }
 }

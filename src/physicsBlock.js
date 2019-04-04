@@ -1,4 +1,4 @@
-import Block from "./block";
+import Block from './block';
 
 export default class PhysicsBlock extends Block {
   constructor(x, y, width, height, mass = 1.0, friction = 0.1) {
@@ -7,7 +7,7 @@ export default class PhysicsBlock extends Block {
     this.previous = this.position();
     this.acceleration = {
       x: 0,
-      y: 0
+      y: 0,
     };
     this._mass = mass;
     this.friction = friction;
@@ -36,21 +36,21 @@ export default class PhysicsBlock extends Block {
   getVelocity(scale = 1.0) {
     return {
       x: (this.x - this.previous.x) * scale,
-      y: (this.y - this.previous.y) * scale
+      y: (this.y - this.previous.y) * scale,
     };
   }
 
   setAcceleration(x, y) {
     this.acceleration = {
       x,
-      y
+      y,
     };
   }
 
   addAcceleration(x, y) {
     this.acceleration = {
       x: this.acceleration.x + x,
-      y: this.acceleration.y + y
+      y: this.acceleration.y + y,
     };
   }
 

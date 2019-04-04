@@ -7,7 +7,7 @@ export default class Physics {
 
   integrate(dynamicBlocks, timeStep) {
     dynamicBlocks.forEach(physBlock =>
-      this.integrateBlock(physBlock, timeStep)
+      this.integrateBlock(physBlock, timeStep),
     );
   }
 
@@ -15,21 +15,21 @@ export default class Physics {
     if (!physicsBlock.hasMass()) {
       physicsBlock.acceleration = {
         x: 0,
-        y: 0
+        y: 0,
       };
       return;
     }
 
     physicsBlock.setAcceleration(
       (physicsBlock.acceleration.x + this.gravity.x) * physicsBlock.mass,
-      (physicsBlock.acceleration.y + this.gravity.y) * physicsBlock.mass
+      (physicsBlock.acceleration.y + this.gravity.y) * physicsBlock.mass,
     );
 
     const velocity = physicsBlock.getVelocity(this.friction);
     const timeScale = (timeStep * timeStep) / 1000;
     const acceleration = {
       x: physicsBlock.acceleration.x * timeScale,
-      y: physicsBlock.acceleration.y * timeScale
+      y: physicsBlock.acceleration.y * timeScale,
     };
     const x = physicsBlock.x + velocity.x + acceleration.x;
     const y = physicsBlock.y + velocity.y + acceleration.y;

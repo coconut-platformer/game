@@ -1,8 +1,8 @@
-import Sand from "./sand";
-import MathHelpers from "../mathHelpers";
-import Stone from "./stone";
-import Lava from "./lava";
-import Water from "./water";
+import Sand from './sand';
+import MathHelpers from '../mathHelpers';
+import Stone from './stone';
+import Lava from './lava';
+import Water from './water';
 
 const DOWN = 1;
 
@@ -22,16 +22,14 @@ export default class TerrainGenerator {
         -this.terrainBlockSize,
         this.terrainBlockSize * 3,
         this.terrainBlockSize,
-        this.terrainBlockSize
+        this.terrainBlockSize,
       );
     }
     const lastY = this.previousBlock.y;
 
     const x = this.previousBlock.x + this.terrainBlockSize;
     const direction = MathHelpers.randomIntegerBetween(-1, 1);
-    const nextY =
-      lastY +
-      direction * (this.terrainBlockSize / 2);
+    const nextY = lastY + direction * (this.terrainBlockSize / 2);
     const nextBlock = this.getRandom(x, nextY, direction);
     this.previousBlock = nextBlock;
     return nextBlock;
@@ -40,34 +38,46 @@ export default class TerrainGenerator {
   getRandom(x, y, direction) {
     const safe = [
       () => {
-        return new Sand(this.assetManager,
-          x, y,
+        return new Sand(
+          this.assetManager,
+          x,
+          y,
           this.terrainBlockSize,
-          this.terrainBlockSize);
+          this.terrainBlockSize,
+        );
       },
       () => {
-        return new Stone(this.assetManager,
-          x, y,
+        return new Stone(
+          this.assetManager,
+          x,
+          y,
           this.terrainBlockSize,
-          this.terrainBlockSize);
+          this.terrainBlockSize,
+        );
       },
     ];
 
     const danger = [
       () => {
-        return new Lava(this.assetManager,
-          x, y,
+        return new Lava(
+          this.assetManager,
+          x,
+          y,
           this.terrainBlockSize,
-          this.terrainBlockSize);
+          this.terrainBlockSize,
+        );
       },
       () => {
-        return new Water(this.assetManager,
-          x, y,
+        return new Water(
+          this.assetManager,
+          x,
+          y,
           this.terrainBlockSize,
-          this.terrainBlockSize);
+          this.terrainBlockSize,
+        );
       },
     ];
-    
+
     if (direction === DOWN && Math.random() < 0.8) {
       return danger[Math.floor(Math.random() * danger.length)]();
     }
