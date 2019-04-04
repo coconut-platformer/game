@@ -41,23 +41,12 @@ export default class Physics {
 
   collideBlock(physicsBlock) {
     const collisions = this.world.collision(physicsBlock);
-    const highest = collisions.reduce((highest, collision) => {
-      const worldBlock = collision.block;
-      if (!highest) return worldBlock;
-      return highest.y < worldBlock.y ? highest : worldBlock;
-    }, null);
-
-    if (highest) {
-      const highestY = highest.y - physicsBlock.height;
-      if (physicsBlock.y > highestY) {
-        physicsBlock.onTouch(highest, highestY);
-        // physicsBlock.move(physicsBlock.x, highestY);
-        // physicsBlock.removeVelocity();
-        // physicsBlock.setInteractions(true);
-      }
-    } else {
-      // physicsBlock.setInteractions(false);
-      physicsBlock.onNotTouch();
-    }
+    physicsBlock.onCollisions(collisions);
+    // for(const collision of collisions) {
+    //   physicsBlock.onTouch(collision);
+    // }
+    // if (collisions.length === 0) {
+    //   physicsBlock.onNotTouch();
+    // }
   }
 }

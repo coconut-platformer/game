@@ -13,11 +13,11 @@ export default class Game {
     this.canvas = canvas;
     this.camera = new Camera(this.canvas.width, this.canvas.height);
     this.context = new RenderContext(this.canvas, this.camera);
+    this.hud = new RenderContext(this.canvas, { x: 0, y: 0 });
     this.context.addDepth('bg', 100);
     this.context.addDepth('fg', 0);
     this.context.addDepth('clouds', -2);
     this.context.addDepth('overlay', -100);
-    this.context.addDepth('hud', -200);
 
     this.assetManager = new AssetManager();
     this.timestep = 1000 / 60;
@@ -50,6 +50,7 @@ export default class Game {
         'shrub',
         'umbrella',
         'water',
+        'title',
       ])
       .load()
       .then(() => this.runGame())
@@ -58,25 +59,51 @@ export default class Game {
 
   runGame() {
     this.world.init();
-    this.ai = new Ai(
-      new Coconut(this.assetManager.getImage('coconut')),
-      this.assetManager,
-    );
-    this.player = new Human(
-      new Coconut(this.assetManager.getImage('coconut')),
+    this.coconut = new Coconut(this.assetManager.getImage('coconut')),
+    this.player = new Ai(
+      this.coconut,
       this.assetManager,
     );
     this.camera.centerOn(this.player.avatar);
+    this.cameraTarget = this.player.avatar.position();
+
+    this.toggleOnSpace();
 
     this.tick();
+  }
+
+  toggleOnSpace() {
+    const onSpace = (e) => {
+      console.log(e.repeat);
+      if (e.key === ' ') {
+        console.log('toggleOnSpace', this.player);
+        document.removeEventListener('keydown', onSpace);
+        this.toggleControl();
+      }
+    }
+
+    document.addEventListener('keydown', onSpace);
+  }
+
+  toggleControl() {
+    this.player.cleanup();
+    if (this.player instanceof Human) {
+      this.player = new Ai(this.coconut, this.assetManager);
+      this.toggleOnSpace();
+    } else {
+      this.player = new Human(this.coconut, this.assetManager);
+    }
+    this.coconut.cancel();
+    this.coconut.interact(this.assetManager);
   }
 
   tick(timestamp) {
     this.timer.addTime(timestamp);
     const movement = this.timer.getDelta();
-
-    this.ai.avatar.advance(movement * this.worldRate);
-    this.ai.tick(this.world.blocks);
+    if (movement > 250) {
+      this.timer.drainAccumulator(this.timestep, () => {});
+      requestAnimationFrame(ts => this.tick(ts));
+    }
 
     this.player.avatar.advance(movement * this.worldRate);
     this.player.tick(this.world.blocks);
@@ -92,21 +119,28 @@ export default class Game {
     });
     this.world.draw(this.context);
     this.context.atDepth('fg', () => {
-      this.context.withTransparency(0.5, () => {
-        this.ai.avatar.draw(this.context);
-      });
       this.player.avatar.draw(this.context);
     });
 
     this.timer.drainAccumulator(this.timestep, () => {
-      this.physics.integrate(
-        [this.ai.avatar, this.player.avatar],
-        this.timestep,
-      );
+      this.physics.integrate([this.player.avatar], this.timestep);
     });
-    this.camera.stepTowards(this.player.avatar);
+    if (this.player instanceof Ai) {
+      this.cameraTarget = this.player.avatar.position();
+    } else {
+      this.cameraTarget.x = Math.max(this.cameraTarget.x + (movement * this.worldRate * 2), this.player.avatar.x);
+      this.cameraTarget.y = this.player.avatar.y;
+    }
+
+    if (this.player instanceof Human && this.player.avatar.x < this.camera.x) {
+      this.toggleControl();
+    }
+
+    this.camera.stepTowards(this.cameraTarget);
 
     this.context.commit();
+    this.hud.drawImage(this.assetManager.getImage('title'), 8, 0, 1008, 273).commit();
+
 
     requestAnimationFrame(ts => this.tick(ts));
   }

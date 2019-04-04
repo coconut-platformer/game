@@ -54,6 +54,8 @@ export default class PhysicsBlock extends Block {
     };
   }
 
+  onCollisions() {}
+
   onTouch(block, contactY) {}
 
   onNotTouch() {}

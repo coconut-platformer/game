@@ -11,9 +11,10 @@ export default class Coconut extends PhysicsBlock {
       y: 10,
     };
 
-    this.canJump = false;
-    this.canUmbrella = false;
     this.massScale = 1;
+    this.canMoveForward = true;
+    this.collisions = [];
+    this.usingUmbrella = false;
   }
 
   get mass() {
@@ -21,6 +22,8 @@ export default class Coconut extends PhysicsBlock {
   }
 
   advance(amount) {
+    if (!this.canMoveForward) return;
+
     const { y } = this.previous;
     this.move(this.x + amount, this.y);
     this.previous.y = y;
@@ -37,12 +40,6 @@ export default class Coconut extends PhysicsBlock {
     );
   }
 
-  bounce() {
-    if (!this.canInteract()) return;
-
-    this.addAcceleration(0, -2);
-  }
-
   interact(assetManager) {
     this.umbrella(assetManager);
     this.jump(assetManager);
@@ -50,38 +47,79 @@ export default class Coconut extends PhysicsBlock {
 
   cancel() {
     this.massScale = 1;
-    this.canUmbrella = !this.canJump;
+    this.usingUmbrella = false;
+    this.canMoveForward = true;
     this.removeDecoration();
   }
 
   umbrella(assetManager) {
-    if (!this.canUmbrella) return;
-    if (this.getVelocity().y < 0) return;
+    if (!this.canUmbrella()) return;
     this.removeVelocity();
 
     this.addDecoration(new Umbrella(assetManager));
 
-    this.massScale = 0.05;
-    this.canUmbrella = false;
+    this.massScale = 0.1;
+    this.usingUmbrella = true;
+  }
+
+  canJump() {
+    return this.collisions.length > 0;
+  }
+
+  canUmbrella() {
+    return !this.canJump() && this.getVelocity().y >= 0 && !this.usingUmbrella;
   }
 
   jump() {
-    if (!this.canJump) return;
+    if (!this.canJump()) return;
 
     this.addAcceleration(0, -5);
-    this.canUmbrella = true;
   }
 
-  onTouch(block, contactY) {
-    this.move(this.x, contactY);
+  onCollisions(collisions) {
+    this.collisions = collisions;
+    const [under, right] = collisions;
+
+    const noCollisions = collisions.length === 0;
+    const oneCollision = collisions.length === 1;
+    const twoCollisionsSameHeight = collisions.length === 2 && under.block.y === right.block.y
+
+    this.canMoveForward = noCollisions || oneCollision || twoCollisionsSameHeight;
+
+    if (oneCollision || twoCollisionsSameHeight) {
+      const contactY = under.block.y - this.height;
+      this.move(this.x, contactY);
+      this.removeVelocity();
+
+      // We're on top of the block
+    } else if (collisions.length === 2) {
+      const contactX = right.block.x - this.width;
+      const contactY = under.block.y - this.height;
+      this.move(contactX, contactY);
+      this.removeVelocity();
+    }
+    if (!this.canMoveForward) {
+      this.removeVelocity();
+    }
+    if (collisions.length > 0) {
+      this.cancel();
+    }
+  }
+
+  onTouch(collision) {
+    const underneath = collision.block.x <= this.x && collision.block.right() >= this.right() && Math.abs(collision.block.y - this.bottom()) < 5;
+
+    const contactY = underneath ? collision.block.y - this.height : this.y;
+    const contactX = underneath ? this.x : collision.block.x - this.width;
+    this.move(contactX, contactY);
     this.removeVelocity();
-    this.canJump = true;
-    this.canUmbrella = false;
+
+    // this.canJump() = true;
     this.massScale = 1;
     this.removeDecoration();
   }
 
   onNotTouch() {
-    this.canJump = false;
+    // this.canJump() = false;
   }
 }

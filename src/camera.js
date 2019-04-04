@@ -28,10 +28,11 @@ export default class Camera extends Box {
 
   stepTowards(block) {
     const center = this.center();
+    const xDiff = block.x - center.x;
     const yDiff = block.y - center.y;
 
     this.centerOn({
-      x: block.x,
+      x: center.x + xDiff / 10,
       y: center.y + yDiff / 10,
     });
   }
