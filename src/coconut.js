@@ -1,5 +1,5 @@
-import PhysicsBlock from "./physicsBlock";
-import Umbrella from "./terrain/decorations/umbrella";
+import PhysicsBlock from './physicsBlock';
+import Umbrella from './terrain/decorations/umbrella';
 
 const COCONUT_SIZE = 50;
 
@@ -8,7 +8,7 @@ export default class Coconut extends PhysicsBlock {
     super(512, COCONUT_SIZE, COCONUT_SIZE, COCONUT_SIZE, 10, 0.1);
     this.coconut = image;
     this.velocity = {
-      y: 10
+      y: 10,
     };
 
     this.canJump = false;
@@ -33,7 +33,7 @@ export default class Coconut extends PhysicsBlock {
       this.x,
       this.y + 2,
       this.width,
-      this.height
+      this.height,
     );
   }
 

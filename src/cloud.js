@@ -7,13 +7,7 @@ export default class Cloud extends Block {
   }
 
   draw(context) {
-    context.drawImage(
-      this.image,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+    context.drawImage(this.image, this.x, this.y, this.width, this.height);
   }
 
   updatePosition(baseSpeed = -1) {

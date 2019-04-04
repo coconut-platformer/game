@@ -4,15 +4,21 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "parcel-bundler": "^1.12.3",
-    "@storybook/html": "^5.0.5",
     "@babel/core": "^7.4.0",
-    "babel-loader": "^8.0.5"
+    "@storybook/html": "^5.0.5",
+    "babel-loader": "^8.0.5",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.16.4"
   },
   "scripts": {
     "start": "parcel src/index.html",
     "dev": "start-storybook -p 6006",
-    "test": "parcel src/test.html"
+    "test": "parcel src/test.html",
+    "code:prettier": "prettier ./src/*.js ./src/**/*.js",
+    "code:lint": "eslint src/*.js src/**/*.js"
   },
   "dependencies": {}
 }

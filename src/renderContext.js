@@ -13,10 +13,12 @@ export default class RenderContext {
   }
 
   addDepth(name, z) {
-    this.depths = this.depths.filter(d => d.name !== name).concat({
-      name,
-      z
-    });
+    this.depths = this.depths
+      .filter(d => d.name !== name)
+      .concat({
+        name,
+        z,
+      });
     return this;
   }
 
@@ -26,9 +28,9 @@ export default class RenderContext {
     const baseZ = depth ? depth.z : 0;
     this.depth = baseZ;
 
-    const tweakDepth = (value) => {
+    const tweakDepth = value => {
       this.depth = baseZ + value;
-    }
+    };
 
     fn(tweakDepth);
 
@@ -52,7 +54,8 @@ export default class RenderContext {
   }
 
   addOperation(type, ...args) {
-    this.operations.push([{
+    this.operations.push([
+      {
         type,
         z: this.depth,
         alpha: this.alpha,
@@ -94,18 +97,21 @@ export default class RenderContext {
         case 'strokeStyle':
           this.context.strokeStyle = args[0];
           break;
-        case 'drawImage':
-          {
-            const [image, x, y, ...rest] = args;
-            this.context.drawImage(image, x - this.camera.x, y - this.camera.y, ...rest);
-            break;
-          }
-        case 'fillRect':
-          {
-            const [x, y, ...rest] = args;
-            this.context.fillRect(x - this.camera.x, y - this.camera.y, ...rest);
-            break;
-          }
+        case 'drawImage': {
+          const [image, x, y, ...rest] = args;
+          this.context.drawImage(
+            image,
+            x - this.camera.x,
+            y - this.camera.y,
+            ...rest,
+          );
+          break;
+        }
+        case 'fillRect': {
+          const [x, y, ...rest] = args;
+          this.context.fillRect(x - this.camera.x, y - this.camera.y, ...rest);
+          break;
+        }
       }
     });
 

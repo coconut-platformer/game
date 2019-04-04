@@ -1,5 +1,5 @@
-import Player from "./player.js";
-import Lava from "./terrain/lava.js";
+import Player from './player.js';
+import Lava from './terrain/lava.js';
 
 export default class Ai extends Player {
   constructor(avatar, assetManager) {

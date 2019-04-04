@@ -13,9 +13,7 @@ export default class AssetManager {
   }
 
   load() {
-    return Promise.all([
-      this.assets.images.load(),
-    ]);
+    return Promise.all([this.assets.images.load()]);
   }
 
   getImage(name) {

@@ -4,15 +4,12 @@ export default class Block extends Box {
   constructor(x, y, width, height) {
     super(x, y, width, height);
 
-    this.backgroundColor = "#3C9";
+    this.backgroundColor = '#3C9';
   }
 
   draw(context) {
     context.fillStyle = this.backgroundColor;
-    const {
-      x,
-      y
-    } = this.position();
+    const { x, y } = this.position();
     context.fillRect(x, y, this.width, this.height);
   }
 

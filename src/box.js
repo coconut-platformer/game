@@ -1,20 +1,20 @@
 const makePoints = (x, y, width, height) => ({
   topLeft: {
     x,
-    y
+    y,
   },
   topRight: {
     x: x + width,
-    y
+    y,
   },
   bottomRight: {
     x: x + width,
-    y: y + height
+    y: y + height,
   },
   bottomLeft: {
     x,
-    y: y + height
-  }
+    y: y + height,
+  },
 });
 
 export default class Box {
@@ -56,10 +56,7 @@ export default class Box {
   }
 
   overlaps(other) {
-    const {
-      topLeft,
-      bottomRight
-    } = this.points();
+    const { topLeft, bottomRight } = this.points();
     return Object.values(other.points()).some(point => {
       return (
         point.x >= topLeft.x &&

@@ -1,4 +1,4 @@
-import Block from "../block.js";
+import Block from '../block.js';
 
 export default class TerrainBlock extends Block {
   constructor(image, x, y, width, height) {
@@ -22,9 +22,8 @@ export default class TerrainBlock extends Block {
 
     if (Math.random() < probability) {
       this.addDecoration(
-        this.decorations[Math.floor(Math.random() * this.decorations.length)]
+        this.decorations[Math.floor(Math.random() * this.decorations.length)],
       );
-
     }
   }
 }
