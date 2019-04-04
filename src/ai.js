@@ -1,4 +1,5 @@
 import Player from "./player.js";
+import Lava from "./terrain/lava.js";
 
 export default class Ai extends Player {
   constructor(avatar, assetManager) {
@@ -17,10 +18,10 @@ export default class Ai extends Player {
     if (nextBlock && nextBlock.y < avatar.y) {
       return avatar.interact(this.assetManager);
     }
-    if (nextBlock.image.src.indexOf("lava") >= 0) {
+    if (nextBlock instanceof Lava) {
       return avatar.interact(this.assetManager);
     }
-    if (underBlock && underBlock.image.src.indexOf("lava") >= 0) {
+    if (underBlock && underBlock instanceof Lava) {
       return avatar.interact(this.assetManager);
     } else {
       return avatar.cancel();

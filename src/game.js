@@ -47,7 +47,8 @@ export default class Game {
         "rock",
         "tree",
         "shrub",
-        "umbrella"
+        "umbrella",
+        "water",
       ])
       .load()
       .then(() => this.runGame())
@@ -105,8 +106,6 @@ export default class Game {
     this.camera.stepTowards(this.player.avatar);
 
     this.context.commit();
-
-    // this.world.updateDrawPosition(movement * this.worldRate);
 
     requestAnimationFrame(ts => this.tick(ts));
   }

@@ -1,18 +1,7 @@
-import Block from "./block";
 import Cloud from "./cloud";
-
-import TerrainBlock from "./terrainBlock";
-import BlockDecoration from "./decorations/blockDecoration";
-import ShrubDecoration from "./decorations/shrub";
-import TreeDecoration from "./decorations/tree";
-import RockDecoration from "./decorations/rock";
-
-import MathHelpers from "./mathHelpers";
+import TerrainGenerator from "./terrain/terrainGenerator";
 
 const TERRAIN_BLOCK_SIZE = 128;
-const WORLD_HEIGHT = 2;
-const WORLD_TOP = 250;
-const WORLD_BOTTOM = TERRAIN_BLOCK_SIZE * WORLD_HEIGHT + WORLD_TOP;
 
 export default class World {
   constructor(assetManager, camera) {
@@ -20,7 +9,11 @@ export default class World {
     this.clouds = [];
     this.assetManager = assetManager;
     this.camera = camera;
-
+    this.terrainGenerator = new TerrainGenerator(
+      this.assetManager,
+      1,
+      TERRAIN_BLOCK_SIZE
+    );
   }
 
   init() {
@@ -47,30 +40,7 @@ export default class World {
   }
 
   addNextBlock() {
-    const lastBlock = this.blocks.slice(-1)[0];
-    const lastY = lastBlock ?
-      lastBlock.y :
-      MathHelpers.randomIntegerBetween(0, WORLD_HEIGHT) * TERRAIN_BLOCK_SIZE +
-      WORLD_TOP;
-    const x = lastBlock ? lastBlock.x + TERRAIN_BLOCK_SIZE : 0;
-    const nextY =
-      lastY +
-      MathHelpers.randomIntegerBetween(-1, 1) * (TERRAIN_BLOCK_SIZE / 2);
-    const block = new TerrainBlock(
-      this.assetManager.getImage(Math.random() > 0.5 ? "sand" : "lava"),
-      x,
-      nextY,
-      TERRAIN_BLOCK_SIZE,
-      TERRAIN_BLOCK_SIZE
-    );
-    const decos = [
-      null,
-      new ShrubDecoration(this.assetManager),
-      new TreeDecoration(this.assetManager),
-      new RockDecoration(this.assetManager)
-    ];
-    block.addDecoration(decos[Math.floor(Math.random() * decos.length)]);
-    this.blocks.push(block);
+    this.blocks.push(this.terrainGenerator.getNextBlock());
   }
 
   draw(context) {
@@ -94,8 +64,6 @@ export default class World {
   }
 
   updateDrawPosition(xAmount = -1) {
-    // this.blocks.forEach(b => b.move(b.x + xAmount, b.y));
-
 
     //     this.clouds.forEach(cloud => cloud.updatePosition(xAmount / 2));
   }
