@@ -4,6 +4,7 @@ import Stone from "./stone";
 import Lava from "./lava";
 import Water from "./water";
 
+const DOWN = 1;
 
 export default class TerrainGenerator {
   constructor(assetManager, seed, terrainBlockSize) {
@@ -27,16 +28,17 @@ export default class TerrainGenerator {
     const lastY = this.previousBlock.y;
 
     const x = this.previousBlock.x + this.terrainBlockSize;
+    const direction = MathHelpers.randomIntegerBetween(-1, 1);
     const nextY =
       lastY +
-      MathHelpers.randomIntegerBetween(-1, 1) * (this.terrainBlockSize / 2);
-    const nextBlock = this.getRandom(x, nextY);
+      direction * (this.terrainBlockSize / 2);
+    const nextBlock = this.getRandom(x, nextY, direction);
     this.previousBlock = nextBlock;
     return nextBlock;
   }
 
-  getRandom(x, y) {
-    const factories = [
+  getRandom(x, y, direction) {
+    const safe = [
       () => {
         return new Sand(this.assetManager,
           x, y,
@@ -49,6 +51,9 @@ export default class TerrainGenerator {
           this.terrainBlockSize,
           this.terrainBlockSize);
       },
+    ];
+
+    const danger = [
       () => {
         return new Lava(this.assetManager,
           x, y,
@@ -62,6 +67,10 @@ export default class TerrainGenerator {
           this.terrainBlockSize);
       },
     ];
-    return factories[Math.floor(Math.random() * factories.length)]();
+    
+    if (direction === DOWN && Math.random() < 0.8) {
+      return danger[Math.floor(Math.random() * danger.length)]();
+    }
+    return safe[Math.floor(Math.random() * safe.length)]();
   }
 }
