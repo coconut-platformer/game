@@ -44,6 +44,7 @@ export default class Game {
   start() {
     this.assetManager
       .selectImages([
+        'hut',
         'coconut',
         'lava',
         'sand',
