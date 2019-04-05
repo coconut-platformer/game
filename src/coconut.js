@@ -86,7 +86,7 @@ export default class Coconut extends PhysicsBlock {
     const twoCollisionsSameHeight = collisions.length === 2 && under.block.y === right.block.y
 
     this.canMoveForward = (noCollisions || oneCollision || twoCollisionsSameHeight);
-    this.speedScale = collisions.some(c => c.block.isDangerous()) ? 0.3 : 1;
+    this.speedScale = collisions.some(c => c.block.isDangerous()) ? 0.2 : 1;
 
     if (oneCollision || twoCollisionsSameHeight) {
       const contactY = under.block.y - this.height;
