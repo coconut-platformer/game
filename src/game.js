@@ -10,7 +10,7 @@ import World from './world';
 import TweenManager from './tweenManager';
 
 export default class Game {
-  constructor(canvas, worldRate = 0.5) {
+  constructor(canvas, worldRate = 0.1) {
     this.canvas = canvas;
     this.camera = new Camera(this.canvas.width, this.canvas.height);
     this.context = new RenderContext(this.canvas, this.camera);
