@@ -5,6 +5,7 @@ export default class Human extends Player {
     super(avatar);
 
     this.assetManager = assetManager;
+    this.interacting = false;
 
     this.keyup = this.keyup.bind(this);
     this.keydown = this.keydown.bind(this);
@@ -16,12 +17,14 @@ export default class Human extends Player {
 
   keyup(e) {
     if (e.key === ' ') {
+      this.interacting = false;
       this.avatar.cancel();
     }
   }
 
   keydown(e) {
-    if (e.key === ' ') {
+    if (e.key === ' ' && !this.interacting) {
+      this.interacting = true;
       this.avatar.interact(this.assetManager);
     }
   }
