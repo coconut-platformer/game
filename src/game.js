@@ -7,9 +7,10 @@ import Physics from './physics';
 import RenderContext from './renderContext';
 import Timer from './timer';
 import World from './world';
+import TweenManager from './tweenManager';
 
 export default class Game {
-  constructor(canvas, worldRate = 0.2) {
+  constructor(canvas, worldRate = 0.3) {
     this.canvas = canvas;
     this.camera = new Camera(this.canvas.width, this.canvas.height);
     this.context = new RenderContext(this.canvas, this.camera);
@@ -29,8 +30,15 @@ export default class Game {
       y: 0.2,
     };
     this.physics = new Physics(this.gravity, 0.98, this.world);
-    this.keyPressed = false;
-    this.keyUp = false;
+    this.tweenManager = new TweenManager();
+
+    this.showHud = false;
+
+    this.time = 0;
+    this.history = [];
+
+    window.addEventListener('blur', () => this.onBlur());
+    window.addEventListener('focus', () => this.onFocus());
   }
 
   start() {
@@ -51,6 +59,7 @@ export default class Game {
         'umbrella',
         'water',
         'title',
+        'space-button',
       ])
       .load()
       .then(() => this.runGame())
@@ -60,23 +69,20 @@ export default class Game {
   runGame() {
     this.world.init();
     this.coconut = new Coconut(this.assetManager.getImage('coconut')),
-    this.player = new Ai(
+    this.player = new Human(
       this.coconut,
       this.assetManager,
     );
     this.camera.centerOn(this.player.avatar);
     this.cameraTarget = this.player.avatar.position();
 
-    this.toggleOnSpace();
-
     this.tick();
+    this.toggleControl();
   }
 
   toggleOnSpace() {
     const onSpace = (e) => {
-      console.log(e.repeat);
       if (e.key === ' ') {
-        console.log('toggleOnSpace', this.player);
         document.removeEventListener('keydown', onSpace);
         this.toggleControl();
       }
@@ -88,25 +94,42 @@ export default class Game {
   toggleControl() {
     this.player.cleanup();
     if (this.player instanceof Human) {
+      if (this.time > 0) {
+        this.history.push(this.time);
+      }
       this.player = new Ai(this.coconut, this.assetManager);
       this.toggleOnSpace();
+      this.tweenManager.tween(300, 0.0, 1.0, v => this.drawHud(v), () => this.showHud = true);
     } else {
+      this.showHud = false;
       this.player = new Human(this.coconut, this.assetManager);
+      this.tweenManager.tween(300, 1.0, 0.0, v => this.drawHud(v));
+      this.time = 0;
     }
     this.coconut.cancel();
     this.coconut.interact(this.assetManager);
   }
 
+  onBlur() {
+    cancelAnimationFrame(this.handle);
+  }
+
+  onFocus() {
+    this.timer = new Timer();
+    this.tick();
+  }
+
   tick(timestamp) {
     this.timer.addTime(timestamp);
     const movement = this.timer.getDelta();
-    if (movement > 250) {
-      this.timer.drainAccumulator(this.timestep, () => {});
-      requestAnimationFrame(ts => this.tick(ts));
+    if (this.player instanceof Human) {
+      this.time += movement;
     }
 
     this.player.avatar.advance(movement * this.worldRate);
     this.player.tick(this.world.blocks);
+
+    this.world.tick(movement)
 
     this.context.atDepth('bg', () => {
       this.context.drawImage(
@@ -128,20 +151,54 @@ export default class Game {
     if (this.player instanceof Ai) {
       this.cameraTarget = this.player.avatar.position();
     } else {
-      this.cameraTarget.x = Math.max(this.cameraTarget.x + (movement * this.worldRate * 2), this.player.avatar.x);
+      this.cameraTarget.x = Math.max(this.cameraTarget.x + (movement * this.worldRate * 1.8), this.player.avatar.x);
       this.cameraTarget.y = this.player.avatar.y;
     }
 
-    if (this.player instanceof Human && this.player.avatar.x < this.camera.x) {
+    if (this.player instanceof Human && this.player.avatar.right() < this.camera.x) {
       this.toggleControl();
     }
 
     this.camera.stepTowards(this.cameraTarget);
 
     this.context.commit();
-    this.hud.drawImage(this.assetManager.getImage('title'), 8, 0, 1008, 273).commit();
 
+    if (this.player instanceof Ai && this.showHud) {
+      this.drawHud();
+    }
 
-    requestAnimationFrame(ts => this.tick(ts));
+    this.tweenManager.tick(movement);
+
+    this.handle = requestAnimationFrame(ts => this.tick(ts));
+
+  }
+
+  drawHud(baseTransparency = 1.0) {
+    this.hud
+      .withTransparency(baseTransparency * 0.7, () => {
+        this.hud.fillStyle = '#000';
+        this.hud.fillRect(0, 0, 1024, 768);
+      })
+      .withTransparency(baseTransparency, () => {
+        this.hud
+          .drawImage(this.assetManager.getImage('title'), 8, 0, 1008, 273)
+        const best = this.history.reduce((max, time) => Math.max(max, time), 0);
+        const latest = this.history[this.history.length - 1];
+        if (latest) {
+          this.hud.fillStyle = 'white';
+          this.hud.font = '16px sans-serif';
+          this.hud.drawText(`Current Time: ${latest.toFixed(2)}ms`, 800, 350);
+          if (best > 0) {
+            this.hud.fillStyle = 'white';
+            this.hud.font = '16px sans-serif';
+            this.hud.drawText(`Best Time: ${best.toFixed(2)}ms`, 800, 400);
+          }
+
+        }
+      })
+      .withTransparency(baseTransparency * 0.7, () => {
+        this.hud.drawImage(this.assetManager.getImage('space-button'), 190, 570, 644, 189)
+      })
+      .commit();
   }
 }

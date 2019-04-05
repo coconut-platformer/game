@@ -4,8 +4,6 @@ import Stone from './stone';
 import Lava from './lava';
 import Water from './water';
 
-const DOWN = 1;
-
 export default class TerrainGenerator {
   constructor(assetManager, seed, terrainBlockSize) {
     this.assetManager = assetManager;
@@ -37,51 +35,51 @@ export default class TerrainGenerator {
 
   getRandom(x, y, direction) {
     const safe = [
-      () => {
-        return new Sand(
-          this.assetManager,
-          x,
-          y,
-          this.terrainBlockSize,
-          this.terrainBlockSize,
-        );
-      },
-      () => {
-        return new Stone(
-          this.assetManager,
-          x,
-          y,
-          this.terrainBlockSize,
-          this.terrainBlockSize,
-        );
-      },
+      new Sand(
+        this.assetManager,
+        x,
+        y,
+        this.terrainBlockSize,
+        this.terrainBlockSize,
+      ),
+      new Stone(
+        this.assetManager,
+        x,
+        y,
+        this.terrainBlockSize,
+        this.terrainBlockSize,
+      ),
     ];
 
     const danger = [
-      () => {
-        return new Lava(
-          this.assetManager,
-          x,
-          y,
-          this.terrainBlockSize,
-          this.terrainBlockSize,
-        );
-      },
-      () => {
-        return new Water(
-          this.assetManager,
-          x,
-          y,
-          this.terrainBlockSize,
-          this.terrainBlockSize,
-        );
-      },
+      new Lava(
+        this.assetManager,
+        x,
+        y,
+        this.terrainBlockSize,
+        this.terrainBlockSize,
+      ),
+      new Water(
+        this.assetManager,
+        x,
+        y,
+        this.terrainBlockSize,
+        this.terrainBlockSize,
+      ),
     ];
 
+    const wasDangerous = this.previousBlock && this.previousBlock.isDangerous();
+
+    const dangerChance = wasDangerous && direction >= 0
+      ? 8
+      : 2
+
     const rnd = MathHelpers.randomIntegerBetween(0, 10);
-    if (direction >= 0 && rnd > 8) {
-      return danger[MathHelpers.randomIntegerBetween(0, danger.length - 1)]();
+    if (rnd < dangerChance) {
+      return wasDangerous
+        ? new (this.previousBlock.constructor)(this.assetManager, x, y, this.terrainBlockSize, this.terrainBlockSize)
+        : danger[MathHelpers.randomIntegerBetween(0, danger.length - 1)];
     }
-    return safe[MathHelpers.randomIntegerBetween(0, safe.length - 1)]();
+    return safe[MathHelpers.randomIntegerBetween(0, safe.length - 1)];
   }
 }

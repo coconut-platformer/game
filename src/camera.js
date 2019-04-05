@@ -32,7 +32,7 @@ export default class Camera extends Box {
     const yDiff = block.y - center.y;
 
     this.centerOn({
-      x: center.x + xDiff / 10,
+      x: center.x + xDiff / 4,
       y: center.y + yDiff / 10,
     });
   }

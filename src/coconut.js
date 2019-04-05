@@ -11,6 +11,7 @@ export default class Coconut extends PhysicsBlock {
       y: 10,
     };
 
+    this.speedScale = 1;
     this.massScale = 1;
     this.canMoveForward = true;
     this.collisions = [];
@@ -25,7 +26,7 @@ export default class Coconut extends PhysicsBlock {
     if (!this.canMoveForward) return;
 
     const { y } = this.previous;
-    this.move(this.x + amount, this.y);
+    this.move(this.x + (amount * this.speedScale), this.y);
     this.previous.y = y;
   }
 
@@ -73,7 +74,7 @@ export default class Coconut extends PhysicsBlock {
   jump() {
     if (!this.canJump()) return;
 
-    this.addAcceleration(0, -5);
+    this.addAcceleration(0, -5 * this.speedScale);
   }
 
   onCollisions(collisions) {
@@ -84,7 +85,8 @@ export default class Coconut extends PhysicsBlock {
     const oneCollision = collisions.length === 1;
     const twoCollisionsSameHeight = collisions.length === 2 && under.block.y === right.block.y
 
-    this.canMoveForward = noCollisions || oneCollision || twoCollisionsSameHeight;
+    this.canMoveForward = (noCollisions || oneCollision || twoCollisionsSameHeight);
+    this.speedScale = collisions.some(c => c.block.isDangerous()) ? 0.3 : 1;
 
     if (oneCollision || twoCollisionsSameHeight) {
       const contactY = under.block.y - this.height;
@@ -104,22 +106,5 @@ export default class Coconut extends PhysicsBlock {
     if (collisions.length > 0) {
       this.cancel();
     }
-  }
-
-  onTouch(collision) {
-    const underneath = collision.block.x <= this.x && collision.block.right() >= this.right() && Math.abs(collision.block.y - this.bottom()) < 5;
-
-    const contactY = underneath ? collision.block.y - this.height : this.y;
-    const contactX = underneath ? this.x : collision.block.x - this.width;
-    this.move(contactX, contactY);
-    this.removeVelocity();
-
-    // this.canJump() = true;
-    this.massScale = 1;
-    this.removeDecoration();
-  }
-
-  onNotTouch() {
-    // this.canJump() = false;
   }
 }

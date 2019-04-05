@@ -25,6 +25,8 @@ export default class Physics {
       (physicsBlock.acceleration.y + this.gravity.y) * physicsBlock.mass,
     );
 
+    // physicsBlock.onCollisions(this.world.collision(physicsBlock));
+
     const velocity = physicsBlock.getVelocity(this.friction);
     const timeScale = (timeStep * timeStep) / 1000;
     const acceleration = {
@@ -36,17 +38,6 @@ export default class Physics {
     physicsBlock.move(x, y);
     physicsBlock.setAcceleration(0, 0);
 
-    this.collideBlock(physicsBlock);
-  }
-
-  collideBlock(physicsBlock) {
-    const collisions = this.world.collision(physicsBlock);
-    physicsBlock.onCollisions(collisions);
-    // for(const collision of collisions) {
-    //   physicsBlock.onTouch(collision);
-    // }
-    // if (collisions.length === 0) {
-    //   physicsBlock.onNotTouch();
-    // }
+    physicsBlock.onCollisions(this.world.collision(physicsBlock));
   }
 }
