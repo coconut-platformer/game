@@ -36,6 +36,10 @@ export default class Box {
     return this.x + this.width;
   }
 
+  bottom() {
+    return this.y + this.height;
+  }
+
   position() {
     return this._points.topLeft;
   }
@@ -59,9 +63,9 @@ export default class Box {
     const { topLeft, bottomRight } = this.points();
     return Object.values(other.points()).some(point => {
       return (
-        point.x >= topLeft.x &&
-        point.x <= bottomRight.x &&
-        (point.y >= topLeft.y && point.y <= bottomRight.y)
+        point.x > topLeft.x &&
+        point.x < bottomRight.x &&
+        (point.y > topLeft.y && point.y < bottomRight.y)
       );
     });
   }

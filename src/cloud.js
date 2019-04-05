@@ -11,6 +11,6 @@ export default class Cloud extends Block {
   }
 
   updatePosition(baseSpeed = -1) {
-    this.x += baseSpeed / this.distance;
+    this.move(this.x + (baseSpeed / this.distance), this.y);
   }
 }

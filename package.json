@@ -15,8 +15,10 @@
   },
   "scripts": {
     "start": "parcel src/index.html",
-    "dev": "start-storybook -p 6006",
     "test": "parcel src/test.html",
+    "build:app": "parcel build src/index.html --out-dir build",
+    "build:tests": "mkdir -p ./build/tests && parcel build src/test.html --out-dir build",
+    "build": "rm -rf ./build && yarn build:app && yarn build:tests",
     "code:prettier": "prettier ./src/*.js ./src/**/*.js",
     "code:lint": "eslint src/*.js src/**/*.js"
   },

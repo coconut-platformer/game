@@ -1,5 +1,6 @@
 import Shrub from './decorations/shrub';
 import Tree from './decorations/tree';
+import Hut from './decorations/hut';
 import TerrainBlock from './terrainBlock.js';
 
 export default class Sand extends TerrainBlock {
@@ -12,6 +13,7 @@ export default class Sand extends TerrainBlock {
       new Shrub(this.assetManager),
       new Shrub(this.assetManager),
       new Tree(this.assetManager),
+      new Hut(this.assetManager),
     ];
     this.addRandomDecoration(0.5);
   }

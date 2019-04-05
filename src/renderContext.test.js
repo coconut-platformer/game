@@ -97,8 +97,6 @@ describe('renderContext', () => {
         });
       });
 
-      console.log(context.operations);
-
       expect(context.operations).to.deep.equal([
         [
           {

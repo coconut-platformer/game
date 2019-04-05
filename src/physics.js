@@ -25,6 +25,8 @@ export default class Physics {
       (physicsBlock.acceleration.y + this.gravity.y) * physicsBlock.mass,
     );
 
+    // physicsBlock.onCollisions(this.world.collision(physicsBlock));
+
     const velocity = physicsBlock.getVelocity(this.friction);
     const timeScale = (timeStep * timeStep) / 1000;
     const acceleration = {
@@ -36,28 +38,6 @@ export default class Physics {
     physicsBlock.move(x, y);
     physicsBlock.setAcceleration(0, 0);
 
-    this.collideBlock(physicsBlock);
-  }
-
-  collideBlock(physicsBlock) {
-    const collisions = this.world.collision(physicsBlock);
-    const highest = collisions.reduce((highest, collision) => {
-      const worldBlock = collision.block;
-      if (!highest) return worldBlock;
-      return highest.y < worldBlock.y ? highest : worldBlock;
-    }, null);
-
-    if (highest) {
-      const highestY = highest.y - physicsBlock.height;
-      if (physicsBlock.y > highestY) {
-        physicsBlock.onTouch(highest, highestY);
-        // physicsBlock.move(physicsBlock.x, highestY);
-        // physicsBlock.removeVelocity();
-        // physicsBlock.setInteractions(true);
-      }
-    } else {
-      // physicsBlock.setInteractions(false);
-      physicsBlock.onNotTouch();
-    }
+    physicsBlock.onCollisions(this.world.collision(physicsBlock));
   }
 }

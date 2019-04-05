@@ -1,9 +1,14 @@
 import Block from '../block.js';
 
 export default class TerrainBlock extends Block {
-  constructor(image, x, y, width, height) {
+  constructor(image, x, y, width, height, dangerous = false) {
     super(x, y, width, height);
     this.image = image;
+    this.dangerous = dangerous;
+  }
+
+  isDangerous() {
+    return this.dangerous;
   }
 
   draw(context) {
