@@ -21,7 +21,7 @@ export default class Human extends Player {
   }
 
   keydown(e) {
-    if (e.key === ' ') {
+    if (e.key === ' ' && !e.repeat) {
       this.avatar.interact(this.assetManager);
     }
   }
