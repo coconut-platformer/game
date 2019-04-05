@@ -1,12 +1,14 @@
 export default class RenderContext {
   constructor(canvas, camera) {
     this.context = canvas.getContext('2d');
+    this.context.globalAlpha = 1.0;
 
     this.depths = [];
     this.depth = 0;
     this.alpha = 1.0;
     this.fill = this.context.fillStyle;
     this.stroke = this.context.strokeStyle;
+    this._font = '24px sans-serif';
     this.camera = camera;
 
     this.resetOperations();
@@ -39,12 +41,12 @@ export default class RenderContext {
   }
 
   withTransparency(alpha, fn) {
-    const initialAlpha = this.context.globalAlpha;
+    const initialAlpha = this.alpha;
     this.alpha = alpha;
 
     fn();
 
-    this.alpha = 1.0;
+    this.alpha = initialAlpha;
     return this;
   }
 
@@ -54,6 +56,7 @@ export default class RenderContext {
   }
 
   addOperation(type, ...args) {
+    if (this.alpha === 0) return this;
     this.operations.push([
       {
         type,
@@ -62,6 +65,7 @@ export default class RenderContext {
         fillStyle: this.fill,
         strokeStyle: this.stroke,
         transform: this.transform,
+        font: this._font,
       },
       ...args,
     ]);
@@ -74,6 +78,14 @@ export default class RenderContext {
 
   set strokeStyle(value) {
     this.stroke = value;
+  }
+
+  set font(value) {
+    this._font = value;
+  }
+
+  drawText(text, x, y) {
+    return this.addOperation('drawText', text, x, y);
   }
 
   drawImage(image, x, y, width, height) {
@@ -96,6 +108,15 @@ export default class RenderContext {
           break;
         case 'strokeStyle':
           this.context.strokeStyle = args[0];
+          break;
+        case 'font':
+          this.context.font = args[0];
+          break;
+        case 'drawText':
+          this.context.font = op.font;
+          this.context.strokeStyle = op.stroke;
+          this.context.fillStyle = op.fill;
+          this.context.fillText(...args);
           break;
         case 'drawImage': {
           const [image, x, y, ...rest] = args;
