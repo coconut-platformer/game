@@ -63,7 +63,8 @@ export default class Game {
     const onSpace = e => {
       if (e.key === ' ') {
         document.removeEventListener('keydown', onSpace);
-        this.toggleControl();
+        this.assetManager.assets.audio.resume()
+          .then(() => this.toggleControl());
       }
     };
 

@@ -85,11 +85,12 @@ export default class Coconut extends PhysicsBlock {
     return !this.canJump() && !this.usingUmbrella;
   }
 
-  jump() {
+  jump(assetManager) {
     if (!this.canJump()) return;
 
     this.adjustJuice(-1);
 
+    assetManager.playAudio('jump');
     this.addAcceleration(0, -5 * this.speedScale);
   }
 
