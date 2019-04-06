@@ -43,25 +43,6 @@ export default class Game {
 
   start() {
     this.assetManager
-      .selectImages([
-        'hut',
-        'coconut',
-        'lava',
-        'sand',
-        'sand-2',
-        'stone',
-        'stone-2',
-        'sky',
-        'cloud-1',
-        'cloud-2',
-        'rock',
-        'tree',
-        'shrub',
-        'umbrella',
-        'water',
-        'title',
-        'space-button',
-      ])
       .load()
       .then(() => this.runGame())
       .catch(console.error);
