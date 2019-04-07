@@ -93,12 +93,28 @@ export default class RenderContext {
     return this.addOperation('drawText', text, x, y);
   }
 
-  drawImage(image, x, y, width, height) {
-    return this.addOperation('drawImage', image, x, y, width, height);
+  drawImage(image, ...rest) {
+    if (image.src.indexOf('water') >= 0) {
+      debugger
+    }
+    return this.addOperation('drawImage', image, ...rest);
   }
 
   fillRect(x, y, width, height) {
     return this.addOperation('fillRect', x, y, width, height);
+  }
+
+  imageArgsWithCamera(args) {
+    let xIndex = 1;
+    let yIndex = 2;
+    if (args.length > 5) {
+      xIndex = 5;
+      yIndex = 6;
+    }
+    const nextArgs = [...args];
+    nextArgs[xIndex] -= this.camera.x;
+    nextArgs[yIndex] -= this.camera.y;
+    return nextArgs;
   }
 
   commit() {
@@ -124,13 +140,8 @@ export default class RenderContext {
           this.context.fillText(...args);
           break;
         case 'drawImage': {
-          const [image, x, y, ...rest] = args;
-          this.context.drawImage(
-            image,
-            x - this.camera.x,
-            y - this.camera.y,
-            ...rest,
-          );
+          const drawImageArgs = this.imageArgsWithCamera(args);
+          this.context.drawImage(...drawImageArgs);
           break;
         }
         case 'fillRect': {
