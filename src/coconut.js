@@ -1,5 +1,6 @@
 import PhysicsBlock from './physicsBlock';
 import Umbrella from './terrain/decorations/umbrella';
+import Lava from './terrain/lava';
 
 const COCONUT_SIZE = 50;
 
@@ -16,6 +17,7 @@ export default class Coconut extends PhysicsBlock {
     this.canMoveForward = true;
     this.collisions = [];
     this.usingUmbrella = false;
+    this.juice = 100.0;
   }
 
   get mass() {
@@ -26,7 +28,7 @@ export default class Coconut extends PhysicsBlock {
     if (!this.canMoveForward) return;
 
     const { y } = this.previous;
-    this.move(this.x + (amount * this.speedScale), this.y);
+    this.move(this.x + amount * this.speedScale, this.y);
     this.previous.y = y;
   }
 
@@ -41,7 +43,17 @@ export default class Coconut extends PhysicsBlock {
     );
   }
 
+  drawJuiceBar(context) {
+    context.fillStyle = '#369';
+    context.fillRect(10, 10, 200 * (this.juice / 100), 20);
+  }
+
+  adjustJuice(byAmount) {
+    this.juice = Math.min(Math.max(this.juice + byAmount, 0), 100);
+  }
+
   interact(assetManager) {
+    // if (this.juice === 0) return;
     this.umbrella(assetManager);
     this.jump(assetManager);
   }
@@ -64,15 +76,17 @@ export default class Coconut extends PhysicsBlock {
   }
 
   canJump() {
-    return this.collisions.length > 0;
+    return this.collisions.length > 0 && this.juice > 0;
   }
 
   canUmbrella() {
-    return !this.canJump() && this.getVelocity().y >= 0 && !this.usingUmbrella;
+    return !this.canJump() && !this.usingUmbrella;
   }
 
   jump() {
     if (!this.canJump()) return;
+
+    this.adjustJuice(-1);
 
     this.addAcceleration(0, -5 * this.speedScale);
   }
@@ -83,9 +97,15 @@ export default class Coconut extends PhysicsBlock {
 
     const noCollisions = collisions.length === 0;
     const oneCollision = collisions.length === 1;
-    const twoCollisionsSameHeight = collisions.length === 2 && under.block.y === right.block.y
+    const twoCollisionsSameHeight =
+      collisions.length === 2 && under.block.y === right.block.y;
+    const lavaCollision = collisions.find(b => b.block.isDangerous());
+    if (lavaCollision && lavaCollision.block instanceof Lava) {
+      this.adjustJuice(-0.3);
+    }
 
-    this.canMoveForward = (noCollisions || oneCollision || twoCollisionsSameHeight);
+    this.canMoveForward =
+      noCollisions || oneCollision || twoCollisionsSameHeight;
     this.speedScale = collisions.some(c => c.block.isDangerous()) ? 0.8 : 1;
 
     if (oneCollision || twoCollisionsSameHeight) {

@@ -8,22 +8,33 @@ export default class Human extends Player {
 
     this.keyup = this.keyup.bind(this);
     this.keydown = this.keydown.bind(this);
+    this.touchStart = this.touchStart.bind(this);
+    this.touchEnd = this.touchEnd.bind(this);
 
     document.addEventListener('keyup', this.keyup);
-
     document.addEventListener('keydown', this.keydown);
+    document.addEventListener('touchstart', this.touchStart);
+    document.addEventListener('touchend', this.touchEnd);
   }
 
   keyup(e) {
     if (e.key === ' ') {
-      this.avatar.cancel();
+      this.touchEnd();
     }
   }
 
   keydown(e) {
-    if (e.key === ' ') {
-      this.avatar.interact(this.assetManager);
+    if (!e.repeat && e.key === ' ') {
+      this.touchStart();
     }
+  }
+
+  touchStart() {
+    this.avatar.interact(this.assetManager);
+  }
+
+  touchEnd() {
+    this.avatar.cancel();
   }
 
   cleanup() {

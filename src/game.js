@@ -32,7 +32,7 @@ export default class Game {
     this.physics = new Physics(this.gravity, 0.98, this.world);
     this.tweenManager = new TweenManager();
 
-    this.showHud = false;
+    this.showOpening = false;
 
     this.time = 0;
     this.history = [];
@@ -50,11 +50,8 @@ export default class Game {
 
   runGame() {
     this.world.init();
-    this.coconut = new Coconut(this.assetManager.getImage('coconut')),
-    this.player = new Human(
-      this.coconut,
-      this.assetManager,
-    );
+    (this.coconut = new Coconut(this.assetManager.getImage('coconut'))),
+      (this.player = new Human(this.coconut, this.assetManager));
     this.camera.centerOn(this.player.avatar);
     this.cameraTarget = this.player.avatar.position();
 
@@ -63,12 +60,12 @@ export default class Game {
   }
 
   toggleOnSpace() {
-    const onSpace = (e) => {
+    const onSpace = e => {
       if (e.key === ' ') {
         document.removeEventListener('keydown', onSpace);
         this.toggleControl();
       }
-    }
+    };
 
     document.addEventListener('keydown', onSpace);
   }
@@ -81,11 +78,17 @@ export default class Game {
       }
       this.player = new Ai(this.coconut, this.assetManager);
       this.toggleOnSpace();
-      this.tweenManager.tween(300, 0.0, 1.0, v => this.drawHud(v), () => this.showHud = true);
+      this.tweenManager.tween(
+        300,
+        0.0,
+        1.0,
+        v => this.drawOpening(v),
+        () => (this.showOpening = true),
+      );
     } else {
-      this.showHud = false;
+      this.showOpening = false;
       this.player = new Human(this.coconut, this.assetManager);
-      this.tweenManager.tween(300, 1.0, 0.0, v => this.drawHud(v));
+      this.tweenManager.tween(300, 1.0, 0.0, v => this.drawOpening(v));
       this.time = 0;
     }
     this.coconut.cancel();
@@ -111,7 +114,7 @@ export default class Game {
     this.player.avatar.advance(movement * this.worldRate);
     this.player.tick(this.world.blocks);
 
-    this.world.tick(movement)
+    this.world.tick(movement);
 
     this.context.atDepth('bg', () => {
       this.context.drawImage(
@@ -133,11 +136,17 @@ export default class Game {
     if (this.player instanceof Ai) {
       this.cameraTarget = this.player.avatar.position();
     } else {
-      this.cameraTarget.x = Math.max(this.cameraTarget.x + (movement * this.worldRate * 1.8), this.player.avatar.x);
+      this.cameraTarget.x = Math.max(
+        this.cameraTarget.x + movement * this.worldRate * 1.8,
+        this.player.avatar.x,
+      );
       this.cameraTarget.y = this.player.avatar.y;
     }
 
-    if (this.player instanceof Human && this.player.avatar.right() < this.camera.x) {
+    if (
+      this.player instanceof Human &&
+      this.player.avatar.right() < this.camera.x
+    ) {
       this.toggleControl();
     }
 
@@ -145,25 +154,36 @@ export default class Game {
 
     this.context.commit();
 
-    if (this.player instanceof Ai && this.showHud) {
+    if (this.player instanceof Ai && this.showOpening) {
+      this.drawOpening();
+    } else {
       this.drawHud();
     }
 
     this.tweenManager.tick(movement);
 
     this.handle = requestAnimationFrame(ts => this.tick(ts));
-
   }
 
-  drawHud(baseTransparency = 1.0) {
+  drawHud() {
+    this.player.avatar.drawJuiceBar(this.hud);
+    this.hud.commit();
+  }
+
+  drawOpening(baseTransparency = 1.0) {
     this.hud
       .withTransparency(baseTransparency * 0.7, () => {
         this.hud.fillStyle = '#000';
         this.hud.fillRect(0, 0, 1024, 768);
       })
       .withTransparency(baseTransparency, () => {
-        this.hud
-          .drawImage(this.assetManager.getImage('title'), 8, 0, 1008, 273)
+        this.hud.drawImage(
+          this.assetManager.getImage('title'),
+          8,
+          0,
+          1008,
+          273,
+        );
         const best = this.history.reduce((max, time) => Math.max(max, time), 0);
         const latest = this.history[this.history.length - 1];
         if (latest) {
@@ -175,11 +195,16 @@ export default class Game {
             this.hud.font = '16px sans-serif';
             this.hud.drawText(`Best Time: ${best.toFixed(2)}ms`, 800, 400);
           }
-
         }
       })
       .withTransparency(baseTransparency * 0.7, () => {
-        this.hud.drawImage(this.assetManager.getImage('space-button'), 190, 570, 644, 189)
+        this.hud.drawImage(
+          this.assetManager.getImage('space-button'),
+          190,
+          570,
+          644,
+          189,
+        );
       })
       .commit();
   }
