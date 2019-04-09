@@ -4,9 +4,6 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@storybook/html": "^5.0.5",
-    "babel-loader": "^8.0.5",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
@@ -16,6 +13,7 @@
   "scripts": {
     "start": "parcel src/index.html",
     "test": "parcel src/test.html",
+    "stories": "parcel src/stories.html",
     "build:app": "parcel build src/index.html --out-dir build",
     "build:tests": "mkdir -p ./build/tests && parcel build src/test.html --out-dir build",
     "build": "rm -rf ./build && yarn build:app && yarn build:tests",
