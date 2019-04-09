@@ -112,6 +112,7 @@ export default class Game {
     }
 
     this.player.avatar.advance(movement * this.worldRate);
+    this.player.avatar.adjustJuice(movement * 0.001);
     this.player.tick(this.world.blocks);
 
     this.world.tick(movement);

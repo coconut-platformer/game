@@ -129,6 +129,7 @@ export default class RenderContext {
           break;
         }
         case 'fillRect': {
+          this.context.fillStyle = op.fillStyle;
           const [x, y, ...rest] = args;
           this.context.fillRect(x - this.camera.x, y - this.camera.y, ...rest);
           break;

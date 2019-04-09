@@ -1,5 +1,8 @@
 import Cloud from './cloud';
+import Coin from './coin';
 import TerrainGenerator from './terrain/terrainGenerator';
+import Block from './block';
+import mathHelpers from '.';
 
 const TERRAIN_BLOCK_SIZE = 128;
 
@@ -7,6 +10,7 @@ export default class World {
   constructor(assetManager, camera) {
     this.blocks = [];
     this.clouds = [];
+    this.coins = [];
     this.assetManager = assetManager;
     this.camera = camera;
     this.terrainGenerator = new TerrainGenerator(
@@ -43,7 +47,15 @@ export default class World {
   }
 
   addNextBlock() {
-    this.blocks.push(this.terrainGenerator.getNextBlock());
+    const block = this.terrainGenerator.getNextBlock();
+    if (Math.random() < 0.3) {
+      for (let i = 0; i < 3; i++) {
+        this.coins.push(
+          new Coin(block.x + 42 * i, block.y - 150, this.assetManager),
+        );
+      }
+    }
+    this.blocks.push(block);
   }
 
   draw(context) {
@@ -63,6 +75,9 @@ export default class World {
         this.blocks.forEach(block => {
           block.draw(context);
         });
+        this.coins.forEach(coin => {
+          coin.draw(context);
+        });
       });
   }
 
@@ -75,6 +90,7 @@ export default class World {
     const left = this.camera.points().topLeft.x - padding;
     const original = this.blocks.length;
     this.blocks = this.blocks.filter(b => b.right() >= left);
+    this.coins = this.coins.filter(b => b.right() >= left);
     const diff = original - this.blocks.length;
     for (let i = 0; i < diff; i++) {
       this.addNextBlock();
