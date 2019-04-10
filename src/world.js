@@ -47,8 +47,8 @@ export default class World {
   }
 
   draw(context) {
-    this.updateBlockList();
-    this.updateClouds();
+    // this.updateBlockList();
+    // this.updateClouds();
 
     context
       .atDepth('clouds', setZ => {

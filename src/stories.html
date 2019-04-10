@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <title>Coconut Island Stories</title>
 <style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -14,6 +19,10 @@
 
 #list li {
   background-color: darkslateblue;
+}
+
+#list li.highlight {
+  background-color: slateblue;
 }
 
 #list li button {
@@ -36,6 +45,7 @@
     <div style="flex-grow: 1">
       <canvas id="game" width="1024" height="768" style="border: 1px black solid; margin: 0 auto;"></canvas>
     </div>
+    <div style="width: 250px" id="controls"></div>
     <script src="./index.stories.js"></script>
   </body>
 </html>

@@ -1,4 +1,6 @@
 import StoryManager from './lib/storyManager';
 import Story from './lib/story';
 
-StoryManager.register('empty', Story);
+class EmptyStory extends Story {}
+
+StoryManager.register('empty', EmptyStory);

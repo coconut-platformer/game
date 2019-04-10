@@ -15,6 +15,11 @@ class StoryManager {
     this.context = new RenderContext(this.canvas, { x: 0, y: 0 });
     this.assetManager = new AssetManager();
     this.tweenManager = new TweenManager();
+    this.onChangeFn = () => {};
+  }
+
+  onChange(fn) {
+    this.onChangeFn = fn;
   }
 
   register(name, klass) {
@@ -25,6 +30,7 @@ class StoryManager {
   listStories() {
     return Object.keys(this.stories).map(name => ({
       name,
+      active: this.story instanceof this.stories[name],
       view: () => this.viewStory(this.stories[name]),
     }));
   }
@@ -48,6 +54,8 @@ class StoryManager {
           this.assetManager,
           this.tweenManager,
         );
+
+        this.onChangeFn();
 
         this.story.onInit();
         this.scheduleTick();
