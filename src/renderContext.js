@@ -1,5 +1,6 @@
 export default class RenderContext {
   constructor(canvas, camera) {
+    this.canvas = canvas;
     this.context = canvas.getContext('2d');
     this.context.globalAlpha = 1.0;
 
@@ -12,6 +13,10 @@ export default class RenderContext {
     this.camera = camera;
 
     this.resetOperations();
+  }
+
+  cloneWithCamera(camera) {
+    return new RenderContext(this.canvas, camera);
   }
 
   addDepth(name, z) {
