@@ -15,8 +15,9 @@
     "test": "parcel src/test.html",
     "stories": "parcel src/stories.html",
     "build:app": "parcel build src/index.html --out-dir build",
-    "build:tests": "mkdir -p ./build/tests && parcel build src/test.html --out-dir build",
-    "build": "rm -rf ./build && yarn build:app && yarn build:tests",
+    "build:tests": "parcel build src/test.html --out-dir build",
+    "build:stories": "parcel build src/stories.html --out-dir build",
+    "build": "rm -rf ./build && yarn build:app && yarn build:tests && yarn build:stories",
     "code:prettier": "prettier ./src/*.js ./src/**/*.js",
     "code:lint": "eslint src/*.js src/**/*.js"
   },
