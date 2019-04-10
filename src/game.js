@@ -167,6 +167,7 @@ export default class Game {
   }
 
   drawHud() {
+    this.hud.drawText(this.world.score, 500, 500);
     this.player.avatar.drawJuiceBar(this.hud);
     this.hud.commit();
   }

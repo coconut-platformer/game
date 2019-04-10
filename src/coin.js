@@ -6,6 +6,10 @@ export default class Coin extends Box {
     this.assetManager = assetManager;
   }
 
+  isDangerous() {
+    return false;
+  }
+
   draw(context) {
     context.drawImage(
       this.assetManager.getImage('coin'),

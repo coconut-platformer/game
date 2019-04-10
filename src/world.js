@@ -8,6 +8,7 @@ const TERRAIN_BLOCK_SIZE = 128;
 
 export default class World {
   constructor(assetManager, camera) {
+    this.score = 0;
     this.blocks = [];
     this.clouds = [];
     this.coins = [];
@@ -18,6 +19,7 @@ export default class World {
       1,
       TERRAIN_BLOCK_SIZE,
     );
+    this.terrainSize = TERRAIN_BLOCK_SIZE;
   }
 
   init() {
@@ -59,8 +61,6 @@ export default class World {
   }
 
   draw(context) {
-    // this.updateBlockList();
-    // this.updateClouds();
 
     context
       .atDepth('clouds', setZ => {
@@ -82,6 +82,8 @@ export default class World {
   }
 
   tick(movement) {
+    this.updateBlockList();
+    this.updateClouds();
     this.clouds.forEach(cloud => cloud.updatePosition(movement / -10));
   }
 
@@ -115,17 +117,31 @@ export default class World {
 
   collision(block) {
     const collisions = [];
-    for (let index = 0; index < this.blocks.length; index++) {
-      const worldBlock = this.blocks[index];
+    const collidable = [ ...this.blocks, ...this.coins ];
+    for (let index = 0; index < collidable.length; index++) {
+      const worldBlock = collidable[index];
       if (worldBlock.overlaps(block)) {
+        if (worldBlock instanceof Coin) {
+          this.removeCoin(worldBlock);
+          this.adjustScore(worldBlock, 1);
+        }
         collisions.push({
           block: worldBlock,
         });
-        if (collisions.length === 2) {
-          break;
-        }
       }
     }
     return collisions;
+  }
+
+  removeCoin(coin) {
+    this.coins = this.coins.filter((c) => {
+      return c !== coin;
+    }); 
+  }
+
+  adjustScore(type, amount) {
+    //we should be adjusting score here
+    this.score += amount;
+    console.log('adjustScore', type, amount);
   }
 }

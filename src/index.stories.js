@@ -1,5 +1,5 @@
 import storyManager from './lib/storyManager';
-import './*.story.js';
+import './coin.story.js';
 
 const list = document.getElementById('list');
 

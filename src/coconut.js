@@ -1,6 +1,7 @@
 import PhysicsBlock from './physicsBlock';
 import Umbrella from './terrain/decorations/umbrella';
 import Lava from './terrain/lava';
+import TerrainBlock from './terrain/terrainBlock';
 
 const COCONUT_SIZE = 50;
 
@@ -76,7 +77,8 @@ export default class Coconut extends PhysicsBlock {
   }
 
   canJump() {
-    return this.collisions.length > 0 && this.juice > 0;
+    const terrainCollisions = this.collisions.filter(c => c.block instanceof TerrainBlock);
+    return terrainCollisions.length > 0 && this.juice > 0;
   }
 
   canUmbrella() {
@@ -91,8 +93,9 @@ export default class Coconut extends PhysicsBlock {
     this.addAcceleration(0, -5 * this.speedScale);
   }
 
-  onCollisions(collisions) {
-    this.collisions = collisions;
+  onCollisions(allCollisions) {
+    this.collisions = allCollisions;
+    const collisions = allCollisions.filter(c => c.block instanceof TerrainBlock);
     const [under, right] = collisions;
 
     const noCollisions = collisions.length === 0;
