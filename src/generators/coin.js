@@ -1,4 +1,4 @@
-import Coin from '../coin';
+import Coin from '../objects/coin';
 
 export default class CoinGenerator {
   constructor(assetManager, seed, rarity) {
@@ -12,9 +12,8 @@ export default class CoinGenerator {
 
     const coins = [];
     for (let x = 0; x < 3; x += 1) {
-      coins.push(new Coin(block.x + (42 * x), block.y - 150, this.assetManager));
+      coins.push(new Coin(block.x + 42 * x, block.y - 150, this.assetManager));
     }
     return coins;
   }
 }
-

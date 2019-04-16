@@ -1,4 +1,4 @@
-import Box from './box.js';
+import Box from '../box.js';
 
 export default class Coin extends Box {
   constructor(x, y, assetManager) {

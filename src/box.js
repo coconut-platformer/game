@@ -25,6 +25,15 @@ export default class Box {
     this._points = makePoints(x, y, width, height);
   }
 
+  resizeBy(value) {
+    const w = this.width - value;
+    const h = this.height - value;
+    const xDiff = value / 2;
+    const yDiff = value / 2;
+
+    return new Box(this.x + xDiff, this.y + yDiff, w, h);
+  }
+
   get x() {
     return this._points.topLeft.x;
   }

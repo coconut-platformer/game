@@ -1,9 +1,8 @@
 import Middleware from './base';
 
 export default class HumanMiddleware extends Middleware {
-  constructor(id, key = ' ') {
-    this.id = id;
-    this.key = key;
+  constructor(config) {
+    super(config);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onKeyUp = this.onKeyUp.bind(this);
   }
@@ -19,12 +18,12 @@ export default class HumanMiddleware extends Middleware {
   }
 
   onKeyDown(e) {
-    if (e.repeat || e.key !== this.key) return;
-    this.sendMessage({ type: 'startInteraction', id: this.id });
+    if (e.repeat || e.key !== this.config.key) return;
+    this.sendMessage({ type: 'startInteraction', id: this.config.id });
   }
 
   onKeyUp(e) {
-    if (e.key !== this.key) return;
-    this.sendMessage({ type: 'endInteraction', id: this.id });
+    if (e.key !== this.config.key) return;
+    this.sendMessage({ type: 'endInteraction', id: this.config.id });
   }
 }
