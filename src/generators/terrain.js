@@ -1,8 +1,8 @@
-import Sand from './sand';
 import MathHelpers from '../mathHelpers';
-import Stone from './stone';
-import Lava from './lava';
-import Water from './water';
+import Sand from '../terrain/sand';
+import Stone from '../terrain//stone';
+import Lava from '../terrain//lava';
+import Water from '../terrain//water';
 
 export default class TerrainGenerator {
   constructor(assetManager, seed, terrainBlockSize) {

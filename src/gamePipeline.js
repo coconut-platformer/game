@@ -1,4 +1,3 @@
-import Ai from './ai.js';
 import AssetManager from './assetManager';
 import RenderContext from './renderContext';
 import Timer from './timer';
@@ -13,42 +12,29 @@ export default class Game {
     this.assetManager = new AssetManager();
     this.tweenManager = new TweenManager();
 
-    this.terrainBlockSize = 128;
-
-    this._shared = {};
-
     this.middleware = [];
+    this.messages = [];
+
+    this.messageQueue = this.messageQueue.bind(this);
 
     window.addEventListener('blur', () => this.onBlur());
     window.addEventListener('focus', () => this.onFocus());
   }
 
-  share(name, ref) {
-    this._shared[name] = ref;
-    return this;
-  }
-
-  unshare(name, ref) {
-    if (this._shared[name] === ref) {
-      delete this._shared[name];
-    }
-  }
-
-  get(name, fallback) {
-    return typeof this._shared[name] === 'undefined'
-      ? fallback
-      : this._shared[name];
+  messageQueue(message, source) {
+    this.messages.push({ message, source });
   }
 
   with(middleware) {
     this.middleware.push(middleware);
+    middleware.connect(this);
     return this;
   }
 
-  callMiddleware(methodName) {
-    let i = null;
-    for (i of this.middleware) {
-      i[methodName](this);
+  callMiddleware(methodName, arg, source = null) {
+    for (let i of this.middleware) {
+      if (i === source) continue;
+      i[methodName](this, arg);
     }
   }
 
@@ -77,6 +63,14 @@ export default class Game {
   tick(timestamp) {
     this.timer.addTime(timestamp);
 
+    let message = this.messages.shift();
+    while (message) {
+      this.callMiddleware('onMessage', message.message, message.source);
+      message = this.messages.shift();
+    }
+
+    this.context.fillStyle = '#fff';
+    this.context.fillRect(0, 0, 1024, 768);
     this.onRender();
     this.context.commit();
     this.onTick();
