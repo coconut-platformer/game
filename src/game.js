@@ -63,7 +63,8 @@ export default class Game {
     const onSpace = e => {
       if (e.key === ' ') {
         document.removeEventListener('keydown', onSpace);
-        this.assetManager.assets.audio.resume()
+        this.assetManager.assets.audio
+          .resume()
           .then(() => this.toggleControl());
       }
     };
@@ -168,7 +169,7 @@ export default class Game {
   }
 
   drawHud() {
-    this.hud.drawText(this.world.score, 500, 500);
+    this.hud.drawText(this.world.score, 990, 50);
     this.player.avatar.drawJuiceBar(this.hud);
     this.hud.commit();
   }

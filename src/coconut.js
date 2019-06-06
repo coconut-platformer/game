@@ -45,8 +45,10 @@ export default class Coconut extends PhysicsBlock {
   }
 
   drawJuiceBar(context) {
+    context.fillStyle = '#eee';
+    context.fillRect(8, 28, 804, 24);
     context.fillStyle = '#369';
-    context.fillRect(10, 10, 200 * (this.juice / 100), 20);
+    context.fillRect(10, 30, 800 * (this.juice / 100), 20);
   }
 
   adjustJuice(byAmount) {
@@ -77,7 +79,9 @@ export default class Coconut extends PhysicsBlock {
   }
 
   canJump() {
-    const terrainCollisions = this.collisions.filter(c => c.block instanceof TerrainBlock);
+    const terrainCollisions = this.collisions.filter(
+      c => c.block instanceof TerrainBlock,
+    );
     return terrainCollisions.length > 0 && this.juice > 0;
   }
 
@@ -96,7 +100,9 @@ export default class Coconut extends PhysicsBlock {
 
   onCollisions(allCollisions) {
     this.collisions = allCollisions;
-    const collisions = allCollisions.filter(c => c.block instanceof TerrainBlock);
+    const collisions = allCollisions.filter(
+      c => c.block instanceof TerrainBlock,
+    );
     const [under, right] = collisions;
 
     const noCollisions = collisions.length === 0;
