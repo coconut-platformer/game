@@ -25,6 +25,6 @@ export default class Water extends TerrainBlock {
     const ratio = this.image.height / this.frameWidth;
     const height = this.height * ratio;
     this.drawDecoration(context);
-    context.drawImage(this.image, imageX, 0, this.frameWidth, this.image.height, this.x, this.y, width, height * 2);
+    context.drawImage(this.image, imageX, 0, this.frameWidth, this.image.height, this.x, this.y, width, height);
   }
 }
