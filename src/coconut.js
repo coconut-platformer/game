@@ -33,7 +33,7 @@ export default class Coconut extends PhysicsBlock {
     this.previous.y = y;
   }
 
-  draw(context) {
+  render(context) {
     this.drawDecoration(context);
     context.drawImage(
       this.coconut,
@@ -77,7 +77,9 @@ export default class Coconut extends PhysicsBlock {
   }
 
   canJump() {
-    const terrainCollisions = this.collisions.filter(c => c.block instanceof TerrainBlock);
+    const terrainCollisions = this.collisions.filter(
+      c => c.block instanceof TerrainBlock,
+    );
     return terrainCollisions.length > 0 && this.juice > 0;
   }
 
@@ -95,7 +97,9 @@ export default class Coconut extends PhysicsBlock {
 
   onCollisions(allCollisions) {
     this.collisions = allCollisions;
-    const collisions = allCollisions.filter(c => c.block instanceof TerrainBlock);
+    const collisions = allCollisions.filter(
+      c => c.block instanceof TerrainBlock,
+    );
     const [under, right] = collisions;
 
     const noCollisions = collisions.length === 0;

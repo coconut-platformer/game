@@ -1,8 +1,8 @@
-import Block from '../block.js';
+import PhysicsBlock from '../physicsBlock.js';
 
-export default class TerrainBlock extends Block {
+export default class TerrainBlock extends PhysicsBlock {
   constructor(image, x, y, width, height, dangerous = false) {
-    super(x, y, width, height);
+    super(x, y, width, height, 0, 0.1);
     this.image = image;
     this.dangerous = dangerous;
   }
