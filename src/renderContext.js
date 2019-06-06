@@ -95,13 +95,17 @@ export default class RenderContext {
 
   drawImage(image, ...rest) {
     if (image.src.indexOf('water') >= 0) {
-      debugger
+      debugger;
     }
     return this.addOperation('drawImage', image, ...rest);
   }
 
   fillRect(x, y, width, height) {
     return this.addOperation('fillRect', x, y, width, height);
+  }
+
+  strokeRect(x, y, width, height) {
+    return this.addOperation('strokeRect', x, y, width, height);
   }
 
   imageArgsWithCamera(args) {
@@ -148,6 +152,16 @@ export default class RenderContext {
           this.context.fillStyle = op.fillStyle;
           const [x, y, ...rest] = args;
           this.context.fillRect(x - this.camera.x, y - this.camera.y, ...rest);
+          break;
+        }
+        case 'strokeRect': {
+          this.context.strokeStyle = op.strokeStyle;
+          const [x, y, ...rest] = args;
+          this.context.strokeRect(
+            x - this.camera.x,
+            y - this.camera.y,
+            ...rest,
+          );
           break;
         }
       }

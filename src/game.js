@@ -50,7 +50,10 @@ export default class Game {
 
   runGame() {
     this.world.init();
-    (this.coconut = new Coconut(this.assetManager.getImage('coconut'))),
+    (this.coconut = new Coconut(
+      this.assetManager.getImage('coconut'),
+      this.assetManager.getImage('cocobut-bar'),
+    )),
       (this.player = new Human(this.coconut, this.assetManager));
     this.camera.centerOn(this.player.avatar);
     this.cameraTarget = this.player.avatar.position();

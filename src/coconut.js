@@ -6,9 +6,10 @@ import TerrainBlock from './terrain/terrainBlock';
 const COCONUT_SIZE = 50;
 
 export default class Coconut extends PhysicsBlock {
-  constructor(image) {
+  constructor(image, barImage) {
     super(512, COCONUT_SIZE, COCONUT_SIZE, COCONUT_SIZE, 10, 0.1);
     this.coconut = image;
+    this.barImage = barImage;
     this.velocity = {
       y: 10,
     };
@@ -45,10 +46,11 @@ export default class Coconut extends PhysicsBlock {
   }
 
   drawJuiceBar(context) {
-    context.fillStyle = '#eee';
-    context.fillRect(8, 28, 804, 24);
-    context.fillStyle = '#369';
-    context.fillRect(10, 30, 800 * (this.juice / 100), 20);
+    const x = 50;
+    const y = 28;
+    context.drawImage(this.barImage, x, y, 804, 26);
+    context.fillStyle = '#fff';
+    context.fillRect(x + 4, y + 8, 794 * (this.juice / 100), 11);
   }
 
   adjustJuice(byAmount) {

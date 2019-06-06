@@ -1,5 +1,5 @@
 import LCG from './math/prng.js';
-const prng = new LCG(10);
+const prng = new LCG(3);
 
 export default {
   /**
